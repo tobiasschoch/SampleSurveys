@@ -1,0 +1,275 @@
+%\SweaveUTF8
+
+<<setRopts, echo=FALSE>>=
+options(width = 80, prompt = "> ", continue = " ")
+options(SweaveHooks = list(fig = function() par(mar = c(4, 4, 1.4, 0.7))))
+@
+
+\SweaveOpts{engine = R, keep.source = TRUE, strip.white = true}
+\SweaveOpts{eps = FALSE, pdf = TRUE, width = 9, height = 6}
+\setkeys{Gin}{width = \textwidth}
+
+\begin{Problem}[Sample size]\label{problem:sample_size}
+We use the data set \code{sepe.dat} from Problem Set 1.
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item We plan a new sample survey to estimate total environmental
+        protection expenditures. The survey will use simple random sampling
+        (\SRS), and the total will be estimated by $\tys = N\mys$, where $\mys$
+        is the sample mean.
+
+        For sample size planning, assume that future expenditures have
+        approximately the same coefficient of variation as the expenditures
+        observed in \code{sepe.dat}. Determine the sample size so that the
+        relative error exceeds $\rho = 10\%$ with probability at most $\alpha =
+        5\%$.
+
+        For the population mean, the requirement is
+        \begin{equation*}
+            \PP\left(\left\vert \frac{\mys - \myu}{\myu} \right\vert >
+                \rho\right) \leq \alpha.
+        \end{equation*}
+        Rewrite this condition for $\tys$. What is the minimum required sample
+        size?
+
+    \begin{Solution}
+        Since $\tys = N\mys$ and $\ty = N \myu$,
+        \begin{equation*}
+            \left\vert \frac{\tys - \ty}{\ty} \right\vert =
+            \left\vert \frac{\mys - \myu}{\myu} \right\vert.
+        \end{equation*}
+        Thus, the same relative-error condition applies to the estimator of the
+        total. Using a normal approximation and initially ignoring the
+        finite-population correction, we obtain
+        \begin{equation*}
+            n_0 = \left(\frac{z_{1 - \alpha/2} \cdot
+            \sigmay}{\rho\,\myu}\right)^2 = \left(\frac{z_{1 -
+            \alpha/2}\cdot\varcoef_y}{\rho}\right)^2,
+        \end{equation*}
+        where $\sigmay$ is the finite-population standard deviation and
+        $\varcoef_y = \sigmay/\myu$ is the finite-population coefficient of
+        variation. Accounting for the finite-population correction gives
+        \begin{equation*}
+            n = \frac{n_0}{1 + n_0/N}.
+        \end{equation*}
+
+        \textbf{Calculation in R:}
+
+<<echo=FALSE>>=
+load("sepe.RData")
+attach(sepe)
+@
+
+<<eval=FALSE>>=
+sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+                    header = TRUE)
+attach(sepe)
+@
+
+<<>>=
+alpha <- 0.05
+rho <- 0.1
+N <- NROW(sepe)
+CV_y <- sd(expend) / mean(expend)
+z <- qnorm(1 - alpha / 2)
+@
+
+        Ignoring the finite population correction,
+
+<<>>=
+n0 <- (z * CV_y / rho)^2
+ceiling(n0)
+@
+
+        Including the finite population correction,
+
+<<>>=
+n <- n0 / (1 + n0 / N)
+ceiling(n)
+@
+
+        Hence, the sample should contain at least \Sexpr{ceiling(n)} units.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Use the minimum sample size from part (a) to estimate total
+        environmental protection expenditures and report a 95\% confidence
+        interval. Cochran proposed the rule $n > 25 G_1^2$, where $G_1$ is
+        Fisher's coefficient of skewness, i.e., the third standardized
+        moment.\footnote{Cochran, W. G. (1977). Sampling Techniques.
+            3$^{\mathrm{rd}}$ ed., New York: John Wiley \& Sons, p. 42.}
+        Sugden et al. proposed the modified rule $n > 28 + 25
+        G_1^2$.\footnote{Sugden, R. A., Smith, T. M. F., and Jones, R. P.
+            (2000). Cochran's Rule for Simple Random Sampling. Journal of the
+            Royal Statistical Society Series B, 62, pp. 787--793.}
+
+        Does the sample size satisfy Cochran's rule? Does it satisfy the rule
+        proposed by Sugden et al.? What do these rules suggest about the
+        adequacy of the 95\% confidence interval?
+
+        \begin{Rhint}
+            You can use the following function to compute the finite-population
+            moment coefficient of skewness.
+
+\begin{Scode}
+skewness_pop <- function(x)
+{
+    z <- x - mean(x)
+    mean(z^3) / mean(z^2)^(3 / 2)
+}
+\end{Scode}
+
+        \end{Rhint}
+
+    \begin{Solution}
+        The skewness of \code{expend} is approximately
+
+<<echo=FALSE>>=
+skewness_pop <- function(x)
+{
+    z <- x - mean(x)
+    mean(z^3) / mean(z^2)^(3 / 2)
+}
+@
+
+<<>>=
+G1 <- skewness_pop(expend)
+G1
+@
+
+        Cochran's rule requires
+        \begin{equation*}
+            n > 25 G_1^2,
+        \end{equation*}
+        which gives
+
+<<>>=
+ceiling(25 * G1^2)
+@
+
+        Sugden et al.'s rule for a Studentized confidence interval is
+        \begin{equation*}
+            n > 28 + 25 G_1^2,
+        \end{equation*}
+        giving
+
+<<>>=
+ceiling(28 + 25 * G1^2)
+@
+
+        The planned sample size of \Sexpr{ceiling(n)} satisfies both rules.
+        Thus, these rules support using the usual normal-based 95\,\% confidence
+        interval. They do not, however, guarantee an exact 95\,\% coverage
+        probability.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Under the same assumptions as in part a), determine the sample size so
+        that the coefficient of variation of the estimator
+        \begin{equation*}
+            \varcoef(\,\tys) = \frac{\se(\,\tys)}{\EE(\,\tys)}
+        \end{equation*}
+        is at most 5\,\%, where $\tys = N \mys$.
+
+    \begin{Solution}
+        Under \SRS,
+        \begin{equation*}
+            \var(\,\tys) = N^2\left(1-\frac{n}{N}\right)\frac{\varyu}{n},
+            \qquad \EE(\,\tys)=\ty=N\myu.
+        \end{equation*}
+        Hence,
+        \begin{equation*}
+            \varcoef(\,\tys) = \varcoef_y \sqrt{\frac{1-n/N}{n}}.
+        \end{equation*}
+
+        We require
+        \begin{equation*}
+            \varcoef(\,\tys) \leq 0.05.
+        \end{equation*}
+        Ignoring the finite-population correction first gives
+        \begin{equation*}
+            \frac{\varcoef_y}{\sqrt{n}} \leq 0.05,
+        \end{equation*}
+        or equivalently,
+        \begin{equation*}
+            n \geq n_0 = \left(\frac{\varcoef_y}{0.05}\right)^2.
+        \end{equation*}
+
+        Accounting for the finite-population correction gives
+        \begin{equation*}
+            n \geq \frac{n_0}{1+n_0/N}.
+        \end{equation*}
+        Thus, the minimum sample size is the smallest integer satisfying this
+        inequality.
+
+        \textbf{Calculation in R:}
+
+<<>>=
+n0 <- (CV_y / 0.05)^2
+ceiling(n0)
+@
+
+<<>>=
+n <- n0 / (1 + n0 / N)
+ceiling(n)
+@
+
+        Thus, at least \Sexpr{ceiling(n)} units are required.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item How large must the sample be to estimate the population proportion
+        $\propu_{31}$ of establishments in industry class 31 (indicator
+        $W_{31}$) with a standard error of at most 5 percentage points? Use
+        \begin{equation*}
+            \props_{31} = \frac{1}{n}\sum_{i \in s}
+                \mathbbm{1}\{i \in W_{31}\},
+        \end{equation*}
+        where
+        \begin{equation*}
+            \indicator\{i \in W_{31}\} = \begin{cases}
+                1 & \text{if $i$ belongs to industry class 31},\\
+                0 & \text{otherwise}.
+            \end{cases}
+        \end{equation*}
+
+    \begin{Solution}
+        From Problem 1.2c), $\props_{31} = 0.1725$. Let $\indicator_{31}$
+        denote the indicator variable defined above. Under \SRS,
+        \begin{equation*}
+            \se(\,\props_{31}) =
+            \sqrt{\left(1 - \frac{n}{N}\right)\frac{\varu_{\indicator_{31}}}{n}},
+        \end{equation*}
+        where $\varu_{\indicator_{31}}$ is the finite-population variance of
+        the indicator.
+
+        Ignoring the finite population correction first,
+        \begin{equation*}
+            n_0 = \frac{\varu_{\indicator_{31}}}{0.05^2}.
+        \end{equation*}
+        The corrected sample size is
+        \begin{equation*}
+            n = \frac{n_0}{1 + n_0/N}.
+        \end{equation*}
+
+        \textbf{Calculation in R:}
+
+<<>>=
+I31 <- code
+P31 <- mean(I31)
+sigma2_I31 <- var(I31)
+n0 <- sigma2_I31 / 0.05^2
+ceiling(n0)
+@
+
+<<>>=
+n <- n0 / (1 + n0 / N)
+ceiling(n)
+@
+
+        Thus, the sample should contain at least \Sexpr{ceiling(n)}
+        establishments.
+    \end{Solution}
+\end{Subtask}
+\end{Problem}

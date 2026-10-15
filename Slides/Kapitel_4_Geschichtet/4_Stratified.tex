@@ -1,0 +1,791 @@
+\documentclass{my_eth_beamer}
+
+\usepackage{my_math_eth}
+
+\numberwithin{equation}{section}
+
+% -----------------------------------------------------------------------------
+% this document
+\title{Introduction to Survey Sampling}
+\newcommand{\TITLE}{Stratified Simple Random Sampling}
+\newcommand{\NR}{4}
+\subtitle{Part \NR: \TITLE}
+\author[Tobias Schoch]{Tobias Schoch}
+\date{2024}
+
+% -----------------------------------------------------------------------------
+\begin{document}
+
+\setstretch{1.1}
+
+\section{\TITLE}\label{sec:strat}
+\setcounter{section}{\NR}
+\setcounter{Bsp}{12}
+\setcounter{Def}{10}
+\setcounter{EinSatz}{1}
+
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{Overview}
+    \noindent \hspace{0.2em}\textcolor{fhnwblue}{\bfseries \NR~\TITLE}
+    \begin{enumerate}[\NR.1]
+        \item Estimation from sample data
+        \item Statistical inference
+        \item Sample size allocation
+        \item Efficiency gains from stratification
+        \item When and how to stratify?
+    \end{enumerate}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber~\insertsection}
+    \begin{itemize}
+    \setlength{\itemsep}{14pt}
+        \item The population $U$ is \alert{partitioned} into $H$ mutually
+            exclusive (and exhaustive), nonempty \alert{strata}
+            (subpopulations) $U_h$ ($h = 1, \ldots, H$).
+        \item Stratum $U_h$ contains $N_h$ elements.
+        \item It follows that
+            \begin{equation*}
+                U = \bigcup_{h = 1}^H U_h \qquad \text{and}
+                    \qquad N = \sum_{h = 1}^H N_h,
+            \end{equation*}
+
+            \vspace{1em}
+
+            \noindent or, in short notation, $U = \bigcup_h U_h$ and $N =
+            \sum_h N_h$.
+        \item The partition \alert{assigns} each element $i \in U$ to exactly
+            one stratum.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{table}[htb]
+        \caption{Population of farms in a U.S. county}
+        \label{tab:strat_farm}
+        {\small
+        \centering
+        \begin{tabular}{llrrr}
+            \toprule
+            \addlinespace
+            Stratum & Farm area & Number of & Mean corn & Standard\\
+            & (grouped) & farms & acreage & deviation \\
+            \addlinespace
+            \midrule
+            1 &   0 -- 40  & 394 &  5.4 &  8.3\\
+            2 &  41 -- 80  & 461 & 16.3 & 13.3\\
+            3 &  81 -- 120 & 391 & 24.3 & 15.1\\
+            4 & 121 -- 160 & 334 & 34.5 & 19.8\\
+            5 & 161 -- 200 & 169 & 42.1 & 24.5\\
+            6 & 201 -- 240 & 113 & 50.1 & 26.0\\
+            7 & 241 --     & 148 & 63.8 & 35.2\\
+            \midrule
+            \multicolumn{2}{l}{Mean or total} & 2\,010 & 26.3 &--\\
+            \bottomrule
+            \addlinespace
+            \multicolumn{5}{l}{\footnotesize{Source: \citet[][p.
+                111]{cochran_1977}; areas in acres (1 acre $\approx 0.4$
+                hectares).}}
+        \end{tabular}
+    }
+    \end{table}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item Stratification primarily serves \alert{two purposes}:
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{4pt}
+                \item \alert{Efficiency:} more precise estimates than under \SRS
+                    through suitable stratification and sample size allocation
+                \item \alert{Estimation for planned domains:} subpopulations are
+                defined as \emph{planned} domains with predetermined sample sizes
+            \end{itemize}
+        \item In practice, the allocation may also account for stratum-specific
+            characteristics such as variability or anticipated response rates
+            (Chapter \insertsectionnumber.\ref{sec:strat_zweck}).
+       \item The \alert{notation} is somewhat \alert{cumbersome}. We therefore
+           introduce the main notation for totals at this point.
+        \item Values of the $y$-variable in stratum $h$ are identified using
+            the \alert{double subscript} $ih$ and written as $y_{ih}$.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+        \item The \alert{population total} of the $y$-variable \alert{in
+            stratum} $h$ is denoted by $\tyh$ ($h = 1, \ldots, H$). We write:
+        \vspace{-0.5em}
+        \begin{align}
+            \Nh &= \text{size of stratum $h$,} \nonumber\\
+            N &= \sum_{h = 1}^H \Nh \; = \; \text{population size,}
+                \nonumber\\
+            \tyh &= \sum_{i \in U_h} y_{ih} \; = \;
+                \text{$y$-total in stratum $h$,} \nonumber\\
+            \ty &= \sum_{h = 1}^H \tyh \; = \;
+                \text{$y$-total in the population.} \label{eq:strat_tot_pop}
+        \end{align}
+        \item The \alert{population total} in (\ref{eq:strat_tot_pop}) can
+            equivalently be written as
+            \vspace{-0.5em}
+            \begin{equation*}
+                \ty = \sum_{h=1}^H \Nh \, \myh,
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \hspace{1.75em} where $\myh$ is the \alert{mean} in stratum $h$, given by
+    \begin{equation*}
+        \myh = \frac{1}{\Nh}\sum_{i \in U_h} y_{ih} \qquad
+            (h = 1, \ldots, H).
+    \end{equation*}
+
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item The \alert{population mean}, denoted by $\myu$, is the weighted
+            sum of the stratum means $\myh$,
+            \begin{equation*}
+                \myu = \sum_{h = 1}^H W_h \, \myh,
+            \end{equation*}
+            \noindent where
+            \begin{equation*}
+                W_h = \frac{\Nh}{N} \qquad (h = 1, \ldots, H)
+            \end{equation*}
+
+            \vspace{1em}
+
+            \noindent is a \alert{stratum weight}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The \alert{variance} of the $y$-variable in stratum $h$ is
+            given by
+            \begin{equation*}
+                \varyh = \frac{1}{\Nh - 1} \sum_{i \in U_h} (y_{ih} - \myh)^2
+                \qquad (h = 1, \ldots, H).
+            \end{equation*}
+        \item The \alert{population variance} is
+            \begin{equation*}
+                \varyu = \frac{1}{N - 1}\sum_{h=1}^H \sum_{i \in U_h}
+                    (y_{ih} - \myu)^2.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Exkurs}[One-way analysis of variance]\label{exkurs:strat_anova}
+        \vspace{-0.5em}
+        An alternative expression for the variance $\varyu$ is
+        \begin{equation*}
+            \varyu = \frac{\SST}{N - 1},
+        \end{equation*}
+
+        \noindent where \alert{SST} denotes the total sum of squares. It can be
+        decomposed into two components: the sum of squares within strata
+        (\alert{SSW}) and the sum of squares between strata (\alert{SSB});
+        formally,
+        \begin{equation*}
+            \SST = \SSW + \SSB,
+        \end{equation*}
+        \noindent with
+        \begin{equation*}
+            \SSW = \sum_{h = 1}^H (\Nh - 1) \varyh \quad \text{and} \quad
+                \SSB = \sum_{h = 1}^H \Nh \big(\myh -\myu \big)^2.
+        \end{equation*}
+        \vspace{0.25em}
+    \end{Exkurs}
+\end{frame}
+
+\subsection{Estimation from sample data}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item A \alert{stratified} probability sample has the following
+            \alert{characteristics}:
+        \vspace{0.25em}
+        \begin{itemize}
+        \setlength{\itemsep}{8pt}
+            \item Each stratum $U_h$ is treated as a \alert{separate
+                subpopulation}.
+            \item A \alert{separate}, \alert{independent sample} $s_h$ of size
+                $n_h$ is selected from each stratum $U_h$ ($h = 1, \ldots, H$).
+        \end{itemize}
+        \item Independence implies that
+        \vspace{0.25em}
+        \begin{itemize}
+        \setlength{\itemsep}{8pt}
+            \item a \alert{different} sampling design can, in principle, be
+                used in each stratum;
+            \item the \alert{variance} of an estimator can be
+                \alert{decomposed} (in short notation) as
+                \begin{equation*}
+                    \var = \sum_h \var_h
+                \end{equation*}
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item For \alert{practical reasons}, it is advisable to use designs
+            from a single family (e.g., \SRS), particularly to keep variance
+            estimation manageable.
+        \item We \alert{restrict attention} to the case in which an \alert{SRS}
+            is selected independently within each stratum.
+        \item The \alert{sample sizes} $n_h$ ($h = 1, \ldots, H$) can be
+            allocated across strata in \alert{different ways} (e.g.,
+            proportional to $N_h$ or according to another rule).
+        \item The stratified design is denoted by $p_{\,\mSTSI}$.
+        \item The \alert{overall sample} $s$ and its size $n$ are obtained as
+            the \alert{union} of the stratum samples $s_h$, $h = 1, \ldots, H$,
+            and the sum of their sample sizes $n_h$,
+            \begin{equation*}
+                s = \bigcup_{h = 1}^H s_h \qquad \text{and}
+                    \qquad n = \sum_{h = 1}^H n_h.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item Let $s$ be a sample under design $p_{\,\mSTSI}$. The estimators
+            of the \alert{mean} and \alert{variance} in stratum $h$ are
+            \begin{equation*}
+                \myhs = \frac{1}{n_h}\sum_{i \in s_h} y_{ih} \qquad \text{and}
+                    \qquad \varyhs = \frac{1}{n_h - 1}\sum_{i \in s_h} (y_{ih}
+                    - \myhs)^2 \qquad (h=1, \ldots,H),
+            \end{equation*}
+            \begin{itemize}
+            \setlength{\itemsep}{12pt}
+                \item \alert{provided} that $n_h > 0$ (mean) and $n_h > 1$
+                    (variance), respectively.
+                \item Both estimators are unbiased for the corresponding
+                    population characteristics.
+            \end{itemize}
+        \item An unbiased \alert{estimator} of the \alert{population mean} is
+            \begin{equation*}
+                \mystrat = \sum_{h = 1}^H W_h \, \myhs.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+\setcounter{equation}{\the\numexpr\value{equation}+1\relax}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{4pt}
+        \item The theoretical \alert{variance} of $\mystrat$ is
+            \begin{equation}\label{eq:strat_var_mean}
+                \var\big(\mystrat\big) = \sum_{h = 1}^H W_h^2
+                    \left(1 - \frac{n_h}{\Nh}\right) \frac{\varyh}{n_h}.
+            \end{equation}
+        \item An unbiased \alert{variance estimator} is
+            \begin{equation*}
+                \widehat{\var}\big(\mystrat\big) = \sum_{h = 1}^H W_h^2
+                    \left(1 - \frac{n_h}{\Nh}\right) \frac{\varyhs}{n_h}.
+            \end{equation*}
+        \item An unbiased estimator of the \alert{population total} $t_y$ is
+            \begin{equation*}
+                \tystrat = \sum_{h = 1}^H \Nh \, \myhs \qquad \text{or}
+                    \qquad \tystrat = N \, \mystrat.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{14pt}
+        \item The \alert{theoretical} variance of $\tystrat$ is
+            \begin{equation*}
+                \var\big(\,\tystrat\big) = N^2 \,\var\big(\mystrat\big).
+            \end{equation*}
+        \item An unbiased \alert{variance estimator} is
+            $N^2 \, \widehat{\var}\big(\mystrat\big)$.
+    \end{itemize}
+\end{frame}
+
+\subsection{Statistical inference}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item The design $p_{\mSTSI}$ of the overall sample consists of $H$
+            stratum-specific designs, \alert{all based on \SRS}.
+        \item It is therefore natural to construct \alert{confidence intervals}
+            \alert{analogously} to those under \SRS (Chapter 3).
+        \item There are \alert{two asymptotic settings}:
+            \vspace{0.25em}
+            \begin{enumerate}
+            \setlength{\itemsep}{6pt}
+                \item The number of strata $H$ is fixed and $n_h,N_h
+                    \rightarrow \infty$.
+                \item The stratum sizes $n_h$ and $N_h$ are fixed and $H
+                    \rightarrow \infty$.
+            \end{enumerate}
+        \item A \alert{central limit theorem} can be established in both
+            settings; see \citet{krewski_rao_1981}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item For sufficiently large sample sizes, an approximate
+            $100(1-\alpha)\%$ \alert{confidence interval} (CI) for $\myu$ is
+            \begin{equation*}
+                \mystrat \; \pm \; z_{1-\alpha/2}\,
+                    \widehat{\se}(\mystrat),
+            \end{equation*}
+            where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$ quantile of the
+            $N(0,1)$ distribution.
+        \item As under \SRS, this confidence interval is based on a
+            \alert{normal approximation}.
+        \item There is no \emph{universal} minimum sample size for the normal
+            approximation to be accurate.
+        \item Its accuracy depends on the finite populations within the strata
+            and on the stratum sample sizes $n_h$, in particular when
+            distributions are skewed.
+        \item Since sampling within each stratum is \SRS, \alert{Cochran's
+            rule} from Chapter 3 can be used as a \alert{rough guide within
+            individual strata}.
+    \end{itemize}
+\end{frame}
+
+\subsection{Sample size allocation}\label{sec:strat_allocation}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item Let $n$ denote the \alert{predetermined} overall sample size.
+        \item When \alert{planning} the survey, we must decide how to
+            \alert{allocate} $n$ across the strata such that
+            \begin{equation*}
+                \sum_{h=1}^H n_h = n
+            \end{equation*}
+
+            \vspace{-0.5em}
+
+            \noindent holds.
+
+        \item We consider two methods for \alert{allocating} the total sample
+            size $n$ across strata:
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item \alert{Proportional} allocation
+                \item \alert{Neyman--Tschuprow optimal} allocation
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize Proportional allocation}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item Proportional allocation can be used when \alert{no information
+            beyond} the stratum population sizes $N_1, \ldots, N_H$ is
+            available.
+        \item Under this allocation, the sample sizes $n_h$ are chosen
+            \alert{proportional} to $\Nh$ ($h = 1, \ldots, H$).
+        \item The stratum sample sizes are set according to
+            \begin{equation*}
+                n_h = \left[n\, \frac{\Nh}{N} \right] =
+                    \big[n \, W_h \big], \quad \text{with}
+                        \quad W_h = \frac{\Nh}{N} \qquad (h = 1, \ldots, H),
+            \end{equation*}
+            \noindent where $[x]$ denotes a \alert{rounding function} that
+            rounds $x$ to an integer.
+        \item Because the $n_h$ must be integers, rounding may result in
+            $\sum_{h=1}^H n_h \neq n$. The rounded values must therefore be
+            adjusted if the equality is to hold.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+    \item The general \alert{variance formula} for the population mean under a
+        stratified design in (\ref{eq:strat_var_mean}) simplifies for the
+        \alert{strategy} $\big(p^{\,\mprop}, \mys^{\,\mstrat}\big)$ to
+            \vspace{0.25em}
+            \begin{equation*}
+                \var_{\mprop}\big(\mys^{\,\mstrat}\big) = (1 - f)\frac{1}{n}
+                    \sum_{h = 1}^H W_h \varyh.
+            \end{equation*}
+        \item We use the short notation $p^{\,\mprop}$ instead of
+            $p_{\,\mSTSI}^{\,\mprop}$.
+    \end{itemize}
+    \vspace{1em}
+    \begin{Bsp}[Corn acreage]
+        \label{ex:strat_county_prop}
+        A stratified \SRS of size $n=100$ is to be selected from $U$ (see
+        Table \ref{tab:strat_farm}) using proportional allocation. The
+        resulting stratum sample sizes $n_h$ are shown below.
+    \end{Bsp}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Bsp_forts}[Cont.]
+        {\small
+        \vspace{0.5em}
+        \begin{center}
+        \begin{tabular}{lrrrrrrr}
+            \toprule
+            \addlinespace
+            Stratum $h$ & 1 & 2 & 3 & 4 & 5 & 6 & 7\\
+            \addlinespace
+            \midrule
+            $W_h = N_h/N \quad$ & 0.196 & 0.229 & 0.195 & 0.166 & 0.084 &
+                0.056 & 0.074\\
+            $n_h = [n W_h]$ & 20 & 23 & 19 & 17 & 8 & 6 & 7\\
+            \bottomrule
+        \end{tabular}
+        \end{center}
+        }
+        \vspace{0.25em}
+    \end{Bsp_forts}
+    \vspace{1em}
+    \noindent\textcolor{fhnwblue}{\bfseries Optimal allocation according to
+    Neyman--Tschuprow}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The allocation proposed by \citet{neyman_1934} and Tschuprow
+            \citep[see][]{dalenius_1992} assumes that, \alert{in addition} to
+            the stratum population sizes $N_1, \ldots, N_H$, the
+            \alert{stratum-specific population variances} of the variable of
+            interest, $\sigma_{1}^2, \ldots, \sigma_{H}^2$, are known.
+   \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item Under this allocation, the stratum sample sizes are set as
+            follows:
+            \begin{equation}\label{eq:strat_neyman}
+                n_h = \left[n \, \frac{W_h \, \sigma_{h}}{\sum_{j=1}^H W_j \,
+                \sigma_{j}}\right], \quad \text{with} \quad W_h = \frac{\Nh}{N}
+                \qquad (h = 1, \ldots, H),
+            \end{equation}
+            \noindent where $[\cdot]$ denotes the rounding function.
+        \item The allocation is \alert{variance-optimal} because it minimizes
+            the variance in (\ref{eq:strat_var_mean}) subject to the constraint
+            $\sum_{h = 1}^H n_h = n$.
+        \item The sampling design is denoted by $p^{\mopt}$ for short
+            (full notation: $p_{\,\mSTSI}^{\,\mopt}$).
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{14pt}
+        \item The \alert{variance} of the estimator $\mys^{\,\mstrat}$ under
+            the strategy $\big(p^{\mopt}, \mys^{\,\mstrat}\big)$ is
+            \begin{equation*}
+                \var_{\mopt}\big(\mys^{\,\mstrat}\big) =
+                    \frac{1}{n}\left(\sum_{h = 1}^H W_h \sigma_h\right)^2 -
+                    \frac{1}{N}\sum_{h = 1}^H W_h \varyh.
+            \end{equation*}
+
+        \vspace{0.25em}
+
+        \item The Neyman--Tschuprow allocation has the following
+            \alert{properties}:
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{8pt}
+                \item Strata with \alert{large population sizes} $\Nh$ tend to
+                    receive \alert{larger} sample sizes $n_h$.
+                \item Strata with \alert{large population variances}
+                    $\sigma_h^2$ tend to receive \alert{larger} sample sizes
+                    $n_h$.
+                \item If $\sigma_{1} = \sigma_{2} = \ldots = \sigma_{H}$, the
+                    allocation reduces to proportional allocation.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item In practice:
+            \vspace{0.5em}
+            \begin{itemize}
+            \setlength{\itemsep}{12pt}
+                \item The \alert{population standard deviations} $\sigma_h$
+                    ($h=1, \ldots, H$) are usually unknown. Estimates
+                    $\widehat{\sigma}_h$ may be substituted for $\sigma_h$ in
+                    (\ref{eq:strat_neyman}).
+                \item \alert{Estimates} may be obtained, for example, from
+                    \alert{historical data} or \alert{related surveys};
+                \item Surveys usually collect many variables, whereas
+                    Neyman--Tschuprow allocation is defined for a single
+                    variable. It may therefore be useful to compute allocations
+                    for several variables of interest and combine them into a
+                    \alert{``compromise allocation.''}
+            \end{itemize}
+        \item If unit sampling costs differ across strata, the
+            \alert{cost-optimal allocation} also depends on the
+            stratum-specific costs.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Bsp}[Corn acreage, cont. of Ex. \ref{ex:strat_county_prop}]
+        \label{ex:strat_county_opt}
+        \vspace{-0.25em}
+        A stratified \SRS of size $n=100$ is to be selected from $U$ (see
+        Table \ref{tab:strat_farm}) using variance-optimal allocation. The
+        resulting stratum sample sizes $n_h$ are shown below.
+        \begin{center}
+            {\small
+            \begin{tabular}{lrrrr}
+                \toprule
+                \addlinespace
+                Stratum $h$ &\;$W_h = N_h / N$ & $\quad W_h\sigma_{h}$ &
+                $\quad$ Share& $\quad n_h$\\
+                \addlinespace
+                \midrule
+                1 & 0.196 & 1.627 & 0.096 & 10\\
+                2 & 0.229 & 3.046 & 0.179 & 18\\
+                3 & 0.194 & 2.929 & 0.172 & 17\\
+                4 & 0.166 & 3.287 & 0.193 & 19\\
+                5 & 0.084 & 2.058 & 0.121 & 12\\
+                6 & 0.056 & 1.456 & 0.086 & 9\\
+                7 & 0.074 & 2.605 & 0.153 & 15\\
+                \midrule
+                \multicolumn{2}{l}{Total} & & 1.000 & 100\\
+                \bottomrule
+            \end{tabular}
+        }
+        \end{center}
+    \end{Bsp}
+\end{frame}
+
+\subsection{Efficiency gains from stratification}\label{sec:strat_efficiency}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item Strategies based on stratified sampling designs can, under
+            certain conditions, achieve \alert{efficiency gains} relative to
+            \SRS.
+        \item We speak of an efficiency gain when an estimator has a
+            \alert{smaller variance than the reference estimator}.
+        \item All sampling designs considered have the same sample size $n$.
+        \item The reference estimator is $\mys_{\,\mSRS} := \mys$,
+            corresponding to the strategy $(p_{\,\mSRS}, \, \mys_{\,\mSRS})$.
+        \item The corresponding estimator variances are denoted by
+            $\var_{\mSRS}$, $\var_{\mprop}$, and $\var_{\mopt}$.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize Proportional allocation vs. SRS}
+    \vspace{-0.5em}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The \alert{efficiency gain} of the strategy $(p^{\,\mprop},\,
+            \mys^{\,\mstrat})$ over $(p_{\mSRS},\,\mys_{\,\mSRS})$ can be
+            expressed as the \alert{difference in variances},
+            \begin{equation}\label{eq:strat_eff_prop_es}
+                \var_{\mSRS} - \var_{\mprop} = \frac{1 - f}{n(N - 1)}\left\{\SSB
+                    - \sum_{h = 1}^H (1 - W_h)\varyh \right\}.
+            \end{equation}
+        \item Equation (\ref{eq:strat_eff_prop_es}) shows that
+            $(p^{\,\mprop},\, \mys^{\,\mstrat})$ is \alert{more efficient}
+            than $(p_{\,\mSRS}, \, \mys_{\,\mSRS})$ only if
+            \begin{equation}\label{eq:strat_ssb_condition}
+                \sum_{h = 1}^H (1 - W_h) \varyh < \SSB.
+            \end{equation}
+        \begin{itemize}
+        \setlength{\itemsep}{4pt}
+            \item[\goto] Thus, proportional stratification is more efficient
+                than \SRS when \alert{between-} \alert{stratum variation} is
+                sufficiently large relative to \alert{within-stratum
+                variation}.
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The \alert{SSB} is \alert{maximized} when the strata are formed
+            so that the stratum-specific \alert{means} $\myh$:
+        \vspace{0.25em}
+        \begin{itemize}
+        \setlength{\itemsep}{6pt}
+            \item are as \alert{different} as possible across strata,
+            \item while the strata are as \alert{homogeneous} as possible
+                internally.
+        \end{itemize}
+    \end{itemize}
+    \vspace{0.75em}
+    \noindent\textcolor{fhnwblue}{\bfseries Optimal vs. proportional
+        allocation}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The \alert{efficiency gain} of the strategy $(p^{\mopt},\,
+            \mys^{\,\mstrat})$ over $(p^{\,\mprop},\, \mys^{\,\mstrat})$
+            can be expressed as the following difference in variances:
+            \begin{equation*}
+                \var_{\mprop} - \var_{\mopt} = \frac{1}{n} \sum_{h = 1}^H W_h
+                \big(\sigma_h - \widebar{\sigma}\big)^2,
+            \end{equation*}
+        \noindent where $\widebar{\sigma} = \sum_{h=1}^H W_h \sigma_h$ is the
+            \alert{weighted mean of the standard deviations} $\sigma_h$.
+   \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Bsp}[Corn acreage, cont. of Ex. \ref{ex:strat_county_prop} and
+        \ref{ex:strat_county_opt}] \label{ex:strat_county_eff}
+        \vspace{-0.25em}
+        For the population of farms in Table \ref{tab:strat_farm}, we compare
+        two strategies for estimating the population mean corn acreage:
+        stratified \SRS with proportional allocation and with variance-optimal
+        allocation. The estimator variances (rounded to two decimal places)
+        are $\var\big(\mys^{\,\mprop}\big)=3.26$ and
+        $\var\big(\mys^{\,\mstrat}\big)=2.73$. Thus, the strategy
+        $(p^{\mopt}, \mys^{\,\mstrat})$ has a theoretical variance that is
+        about 16\% smaller.
+    \end{Bsp}
+\end{frame}
+
+\subsection{When and how to stratify?}\label{sec:strat_zweck}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    Reasons for using stratified sampling include:
+    \vspace{0.25em}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item \alert{Efficiency considerations:}
+            \begin{itemize}
+            \setlength{\itemsep}{4pt}
+                \item With suitable stratification and sample size allocation,
+                    a stratified sample can yield \alert{more precise}
+                    estimates.
+                \item Gains in precision may arise when strata differ in their
+                    \alert{means} or \alert{variances} and the allocation
+                    exploits these differences.
+                \item In particular, stratification is effective when strata
+                    are internally \alert{homogeneous} with respect to the
+                    variable of interest.
+            \end{itemize}
+        \item \alert{Estimation for subpopulations:}
+            \begin{itemize}
+            \setlength{\itemsep}{4pt}
+                \item Stratification allows subpopulations to be defined as
+                    \alert{planned domains} and their sample sizes to be set
+                    to achieve the required precision.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item \alert{Administrative convenience:} A national survey may, for
+            example, be easier to organize if each region (e.g., canton)
+            independently collects its assigned part of the sample. In this
+            case, regions may provide a suitable stratification.
+        \item \alert{``Balanced'' samples (control of sample composition):}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item A stratified sample can prevent a potentially
+                    ``unbalanced'' sample composition. For example, an \SRS of
+                    $n=200$ university students might contain substantially
+                    more women (e.g., 130) than men (e.g., 70), even if the
+                    population is evenly split by gender.
+                \item This is not a theoretical problem, but the results may
+                    appear more acceptable to a general audience if the
+                    subsamples are ``balanced.''
+        \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item In practice, stratified sampling requires that
+            \alert{stratum membership is known before sampling}.
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{4pt}
+                \item[\goto] Stratification may therefore be theoretically
+                    desirable but infeasible if the information needed to
+                    assign units to strata is \alert{not available on the
+                    sampling frame}.
+            \end{itemize}
+        \item If \alert{response rates} are expected to differ across strata,
+            the initial sample sizes $n_h$ may be adjusted accordingly. Strata
+            with lower expected response rates may, for example, be sampled
+            more heavily.
+        \item If only the stratum population sizes $N_h$, $h=1,\ldots,H$, are
+            known, but unit-level stratum membership is unavailable before
+            sampling, \alert{post-stratification} may be used instead.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\setcounter{section}{\the\numexpr\value{section}-1\relax}
+\begin{frame}
+    \frametitle{Literature}
+    {\footnotesize
+        \setstretch{1.1}
+        \bibliographystyle{fhnw_en}
+        \bibliography{master}
+    }
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\lastpage
+
+\end{document}

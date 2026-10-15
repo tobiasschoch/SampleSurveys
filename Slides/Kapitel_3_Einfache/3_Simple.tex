@@ -1,0 +1,707 @@
+\documentclass{my_eth_beamer}
+
+\usepackage{my_math_eth}
+
+\numberwithin{equation}{section}
+
+% -----------------------------------------------------------------------------
+% this document
+\title{Introduction to Survey Sampling}
+\newcommand{\TITLE}{Simple Random Sampling}
+\newcommand{\NR}{3}
+\subtitle{Part \NR: \TITLE}
+\author[Tobias Schoch]{Tobias Schoch}
+\date{2024}
+
+% -----------------------------------------------------------------------------
+\begin{document}
+
+\setstretch{1.1}
+
+\section{\TITLE}\label{sec:srs}
+\setcounter{section}{\NR}
+\setcounter{Bsp}{10}
+\setcounter{Def}{10}
+\setcounter{EinSatz}{1}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{Overview}
+    \noindent \hspace{0.2em}\textcolor{fhnwblue}{\bfseries \NR~\TITLE}
+    \begin{enumerate}[\NR.1]
+        \item Estimation
+        \item Statistical inference
+        \item Sample size determination
+        \item Estimation for subpopulations -- Unplanned domains
+    \end{enumerate}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber~\insertsection}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item Simple random sampling (\SRS) is the \alert{gold standard} of
+            probability sampling designs.
+        \item Let $U$ be a population of $N$ elements. The sample size $n$
+            ($0 < n < N$) under \SRS can be expressed by the
+            \alert{sampling fraction},
+            \begin{equation*}
+                f = \frac{n}{N}.
+            \end{equation*}
+        \item The \alert{sampling design} $p_{\mSRS}$ was introduced in
+            Chapter 2 and is given, for $s \in \samplespace$, by
+            \begin{equation*}
+                p_{\mSRS}(s) = \begin{cases}
+                        1 / \binom{N}{n} & \text{if} \; \vert s \vert = n,\\
+                        0 & \text{otherwise}.
+                    \end{cases}
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}[fragile]
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item The (first-order sample) \alert{inclusion probabilities} under
+            $p_{\mSRS}$ have the following form (see Chapter 2):
+            \begin{equation*}
+                \pi_i = \PP(i \in s) = \frac{n}{N} \qquad \text{for every}
+                    \; i \in U.
+            \end{equation*}
+        \item \alert{Selecting} an \SRS in \textsf{R}:
+
+        \vspace{1em}
+
+\begin{Rcode}
+    sample(x, size, replace = FALSE, prob = NULL)
+\end{Rcode}
+
+        \item For example,
+    \end{itemize}
+
+\begin{Rcode}
+    > set.seed(2048)
+    > sample(1:100, 10)
+    [1] 23 97 88 96 43 27 57 67 31 12
+\end{Rcode}
+
+\end{frame}
+
+\subsection{Estimation}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item Let $s$ be an \SRS of size $n$ from $U$. The variable of
+            interest is denoted by $y_i$.
+        \item An \emph{unbiased} estimator of the \alert{population mean}
+            $\myu$ is
+    \end{itemize}
+    \vspace{0.5em}
+    \begin{equation*}
+        \mys = \frac{1}{n} \sum_{i \in s} y_i.
+    \end{equation*}
+    \vspace{-0.5em}
+    \begin{Exkurs}[Unbiasedness]\label{exkurs:srs_unbiased}
+        \vspace{-0.25em}
+        To show that $\mys$ is an unbiased estimator of $\myu$, we express
+        the estimator as a sum over $i \in U$,
+        \begin{equation*}
+            \mys = \frac{1}{n} \sum_{i \in s} y_i =
+                \frac{1}{n} \sum_{i \in U} \indicator\{i \in s\} \, y_i,
+        \end{equation*}
+    \end{Exkurs}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Exkurs_forts}[Cont.]
+        \vspace{0.25em}
+        where $\indicator\{i \in s\}$ is the sample inclusion indicator.
+        Under the sampling design, $\indicator\{i \in s\}$ is a Bernoulli
+        random variable. Under $p_{\mSRS}$, its expected value is
+        \begin{equation*}
+            \EE_p\big(\indicator\{i \in s\}\big) = \pi_i = \frac{n}{N}
+        \end{equation*}
+        for every $i \in U$. Hence,
+        \begin{equation*}
+            \EE_p(\mys) = \frac{1}{n} \sum_{i \in U}
+                \EE_p\big(\indicator\{i \in s\}\big) \, y_i =
+                    \frac{1}{n} \sum_{i \in U} \pi_i \, y_i =
+                    \frac{1}{n} \sum_{i \in U} \frac{n}{N} \, y_i = \myu,
+        \end{equation*}
+        \noindent as required.
+    \end{Exkurs_forts}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The \alert{theoretical variance} of the estimator $\mys$ ($\var$
+            or $\var_p$ if we want to highlight the dependence on the design
+            $p$) is
+            \begin{equation*}
+                \var(\mys) = \left(1 - \frac{n}{N}\right)\frac{\varyu}{n} =
+                    (1 - f)\frac{\varyu}{n},
+            \end{equation*}
+            \noindent where $\varyu$ is the population variance of the
+            $y$-variable,
+            \begin{equation*}
+                \varyu = \frac{1}{N - 1}\sum_{i \in U} (y_i - \myu)^2.
+            \end{equation*}
+        \item The factor $(1 - f)$ is called the \alert{finite population
+            correction} (FPC). Without this factor, $\var(\mys)$ would equal
+            the familiar variance formula for the sample mean from classical
+            statistics.
+        \item In the \alert{special case} $n = N$ (a census),
+            $\var(\mys) = 0$.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{14pt}
+        \item An unbiased \alert{variance estimator} for $\mys$ that requires
+            only the observed values $y_i$, $i \in s$, is
+            \begin{equation*}
+                \widehat{\var}(\mys) = \left(1 - \frac{n}{N}\right)
+                    \frac{\varys}{n},
+            \end{equation*}
+            \noindent where
+            \begin{equation*}
+                \varys = \frac{1}{n - 1}\sum_{i \in s}(y_i - \mys)^2.
+            \end{equation*}
+        \item The estimated \alert{standard error} $\widehat{\se}(\mys)$ is
+            defined as the square root of $\widehat{\var}(\mys)$.
+        \item The estimated \alert{coefficient of variation} is, for
+            $\mys > 0$,
+            \begin{equation*}
+                \widehat{\varcoef}(\mys) = \frac{\widehat{\se}(\mys)}{\mys}.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize Population total}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The \alert{population total} $\ty$ can be estimated unbiasedly by
+        \begin{equation*}
+            \tys = N \,\mys.
+        \end{equation*}
+    \end{itemize}
+
+    \vspace{1em}
+
+    \textcolor{fhnwblue}{\textbf{Proportion}}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item Let $b_i = \indicator\{i \in B\}$ be the indicator variable for
+            the \alert{dichotomous characteristic} $B$, $i \in U$ (e.g.,
+            whether a person is employed, ``yes'' = 1 and ``no'' = 0).
+        \item The \alert{population proportion} $\propu_b$ is
+            \begin{equation*}
+                \propu_b = \frac{1}{N} \sum_{i \in U} b_i =
+                    \frac{\text{number of units with characteristic $B$}}{N}.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+\subsection{Statistical inference}\label{sec:srs_inference}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item Recall the \alert{central limit theorem} from Chapter 2.
+            Under suitable regularity conditions,
+            \begin{equation*}
+                \frac{\mys - \myu}{\widehat{\se}(\mys)}
+            \end{equation*}
+            is approximately $N(0,1)$-distributed for sufficiently large $n$.
+        \item Thus, for sufficiently large $n$, an approximate
+            $100(1 - \alpha)\%$ \alert{confidence interval} (CI) for $\myu$ is
+            \begin{equation}\label{eq:srs_ci}
+                \mys \; \pm \; z_{1-\alpha/2}\,
+                    \widehat{\se}(\mys),
+            \end{equation}
+            where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$ quantile of the
+            $N(0,1)$ distribution.
+        \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The confidence interval is based on a \alert{normal
+            approximation}.
+        \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item There is no \emph{universal} minimum sample size for this
+                    approximation to be accurate. Its accuracy depends on the
+                    finite population, in particular on skewness and extreme
+                    values.
+                \item Because such features are \emph{common} in survey
+                    applications, simple rules such as $n \geq 30$'' or $n \geq
+                    50$'' should be used with caution.
+            \end{itemize}
+        \item A \alert{practical question} is therefore how large $n$ should be
+            for the normal approximation to be sufficiently accurate.
+        \item For populations with marked \alert{positive skewness},
+            \citet[][p.~42]{cochran_1977} proposed the \alert{crude rule}
+            \begin{equation*}
+                n > 25,G_1^2,
+            \end{equation*}
+            where $G_1$ denotes the population skewness.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item Population skewness is defined as
+            \begin{equation*}
+                G_1 = \frac{1}{N} \sum_{i \in U} \left(\frac{y_i -
+                \myu}{\sigma_y}\right)^3
+            \end{equation*}
+        \item Cochran emphasized that this is only a \alert{crude rule of
+            thumb}, not a general criterion for the normal approximation.
+        \item \citet{sugden_smith_etal_2000} proposed the more conservative rule
+            \begin{equation*}
+                n_{\min} = 28 + 25\,G_1^2.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize Confidence interval for an estimated proportion}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item To construct a $100(1 - \alpha)\%$ CI for the estimated
+            proportion $\props$, we can replace $\mys$ by $\props$ in
+            (\ref{eq:srs_ci}), giving
+            \begin{equation*}
+                \props \, \pm \, z_{1 - \alpha / 2} \, \sqrt{(1 -f) \,
+                    \frac{\props (1 - \props)}{n - 1}}.
+            \end{equation*}
+        \item The resulting CI is called the \alert{Wald interval}. It can be
+            used under the usual conditions, i.e., when $n \propu \geq 5$
+            and $n(1 - \propu) \geq 5$.
+        \item The Wald interval can behave erratically and is considered
+            unreliable when $n$ is small or $\propu$ is close to $0$ or $1$.
+            \citet{brown_cai_etal_2001} therefore recommend the
+            \alert{Wilson interval}; it is implemented in the function
+            \code{svyciprop()} of the \textsf{R} package \code{survey}.
+    \end{itemize}
+\end{frame}
+
+\subsection{Sample size determination}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item One of the first questions in survey planning is:
+            \alert{How large should the sample be?}
+        \item The answer depends mainly on three \alert{factors}:
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item the total survey budget;
+                \item the cost of observing one unit;
+                \item the required precision of the estimates.
+            \end{itemize}
+        \item In this section, we consider only \alert{sample size
+            determination} based on the \alert{required precision}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item Even when a survey collects \alert{many variables}, it is often
+            possible to focus on one or two variables of \alert{primary
+            interest} and use them to determine the sample size.
+        \item In what follows, we assume that the required precision is
+            specified for the estimated \alert{population mean} $\myu$.
+        \item Let $\epsilon > 0$ denote the \alert{margin of error}. The
+            precision requirement can then be stated as follows:
+            \alert{Choose the sample size such that}
+            \begin{equation}\label{eq:srs_abs_err}
+                \PP\big(\vert \mys - \myu \vert > \epsilon \big) \leq \alpha,
+            \end{equation}
+
+            \vspace{-0.25em}
+
+            \noindent where the probability $\alpha$ (e.g., 5\%) and
+            $\epsilon > 0$ are specified in advance.
+        \item By the \alert{central limit theorem} (see Theorem 1 in Chapter
+            2), $(\mys - \myu) \, / \, \widehat{\se}(\mys)$ has an
+            approximately $N(0,1)$ distribution for a sufficiently large
+            sample size.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item Using the $N(0,1)$ approximation, we can rewrite
+            (\ref{eq:srs_abs_err}) and obtain the \alert{initial estimate}
+            that the sample size must be at least
+            \begin{equation}\label{eq:srs_n}
+                n_0 = \left(\frac{z_{1 - \frac{\alpha}{2}} \cdot
+                    \sigma_y}{\epsilon}\right)^2,
+            \end{equation}
+            \noindent where $z_{1 - \alpha/2}$ is the $(1 - \alpha/2)$
+            quantile of the $N(0,1)$ distribution and $\sigma_y$ is the
+            standard deviation of the $y$-variable.
+        \item \alert{Alternative derivation}: Set the half-width of the
+            $100(1 - \alpha)\%$ confidence interval for $\mys$ equal to
+            $\epsilon$:
+                \begin{equation*}
+                    \mys \, \pm \, \underbrace{z_{1 - \alpha / 2} \;
+                        \widehat{\se}(\mys)}_{=\epsilon}.
+                \end{equation*}
+        \item In practice, $n_0$ is \alert{rounded up} to the next integer.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item If $n_0 > N$, we set $n_0 = N$ (a census).
+        \item The estimate in (\ref{eq:srs_n}) is suitable when the resulting
+            sampling fraction $n_0/N$ is negligible (e.g., $n_0/N < 0.01$).
+            Otherwise, we use the \alert{refined estimate}
+            \begin{equation}\label{eq:srs_n_update}
+                n = \frac{n_0}{1 + n_0 / N},
+            \end{equation}
+
+            \vspace{0.5em}
+
+            \noindent which accounts for the \alert{finite population
+            correction}.
+        \item If the population is very large, typically $n \ll N$.
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item[\goto] In this case, the required sample size is
+                    determined by the \alert{absolute size} of $n$, not by the
+                    ratio $n/N$.
+            \end{itemize}
+
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item In practice, the (population) standard deviation $\sigma_y$ in
+            (\ref{eq:srs_n}) is \alert{unknown} and must be estimated. The
+            following options are available:
+            \vspace{0.5em}
+            \begin{enumerate}
+            \setlength{\itemsep}{6pt}
+                \item conduct a \alert{pilot study};
+                \item use information from \alert{previous studies} or the
+                    literature;
+                \item use a \alert{rough estimate} if the first two options
+                    are not feasible.
+            \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize Anticipated nonresponse}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item \alert{Nonresponse and refusals} are common in survey practice.
+        \item The \alert{expected amount} of nonresponse must therefore be
+            taken into account at the planning stage.
+        \item Let $r$ denote the anticipated response rate, $r \in (0,1]$.
+            The \alert{gross sample size} $n^*$ is
+            \begin{equation*}
+                n^* = \frac{n}{r},
+            \end{equation*}
+            \noindent where $n$ is the \alert{net sample size} determined
+            using the formulas above.
+        \item In practice, the response rate $r$ can usually only be estimated
+            \alert{roughly} from previous experience.
+    \end{itemize}
+\end{frame}
+
+\subsection{Estimation for subpopulations -- Unplanned domains}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item Let $U_d \subset U$ be a \alert{subpopulation} of $U$ that is of
+            particular interest for the analysis (a domain of interest).
+        \item We also refer to $U_d$ simply as a \alert{domain}.
+    \end{itemize}
+    \vspace{2em}
+    \begin{columns}
+        \begin{column}{0.5\textwidth}
+            \begin{tabular}{lrr}
+                \toprule
+                \addlinespace
+                Language region & $\quad$ Number & $\quad$ Proportion\\
+                \addlinespace
+                \midrule
+                German     & 1\,260 &  66\%\\
+                French     &    572 &  30\%\\
+                Italian    &     70 &   4\%\\
+                \midrule
+                Total      & 1\,902 & 100\%\\
+                \bottomrule
+            \end{tabular}
+        \end{column}
+        \begin{column}{0.3\textwidth}
+
+            \vspace{-5.5em}
+
+            {\small
+                \textcolor{fhnwblue}{\textbf{Example.}}
+                Population of ophthalmologists in Switzerland with a license
+                to practice, by language region
+                (MedReg, 2022)
+            }
+        \end{column}
+    \end{columns}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{4pt}
+        \item Assume that domain $U_d$ is \alert{unplanned}. This means that
+            \vspace{0.25em}
+            \begin{itemize}
+                \setlength{\itemsep}{6pt}
+                \item the elements of $U_d$ \alert{cannot be identified} in
+                    advance, and
+                \item its population size $N_d$ is \alert{unknown}
+                    ($P_d = N_d/N$ is unknown).
+            \end{itemize}
+        \item We want to estimate the \alert{mean} $\widebar{y}_{U_d}$ in the
+            \alert{subpopulation} $U_d$.
+        \item First, note that $\widebar{y}_{U_d}$ can be written as
+            \begin{equation*}
+                \widebar{y}_{U_d} =
+                    \frac{\sum_{i \in U} \indicator_{id} \; y_i}{\sum_{i \in U}
+                    \indicator_{id}},
+            \end{equation*}
+
+            \vspace{-0.5em}
+
+            \noindent where
+            \begin{equation*}
+                \indicator_{id} = \indicator\{i \in U_d\} = \begin{cases}
+                        1 & \text{if} \; i \in U_d,\\
+                        0 & \text{otherwise}.
+                    \end{cases}
+            \end{equation*}
+            \noindent Thus, $\widebar{y}_{U_d}$ is the \alert{ratio} of two
+            population totals.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item The \alert{sample size} $n_d$ of the subsample $s_d$ falling in
+            $U_d$ ($s_d = s \cap U_d$) is known \alert{only after} the sample
+            $s$ has been selected.
+        \item Using the indicator variable
+            \begin{equation*}
+                \indicator_{id}^s = \indicator\{i \in s_d\} = \begin{cases}
+                    1 & \text{if} \; i \in s_d,\\
+                    0 & \text{otherwise},
+                \end{cases} \qquad i \in U,
+            \end{equation*}
+            \noindent the \alert{domain sample size} can be written as
+            \begin{equation*}
+                n_d = \sum_{i \in U}\indicator_{id}^s.
+            \end{equation*}
+        \item Since $\indicator_{id}^s$ is a function of the random sample
+            $s$, $n_d$ is a \alert{random variable} with expected value
+            $nP_d$ (hypergeometric distribution).
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Bsp}[Ophthalmologists]\label{ex:srs_augenarzt}
+        \vspace{-0.5em}
+        \noindent Suppose an \SRS of size $n = 500$ is drawn from the
+        population of ophthalmologists. The expected realized sample size
+        $n_d$ for Italian-speaking Switzerland is approximately $18$. With
+        probability 95\%, $n_d$ lies in the interval $[12,\,26]$.
+    \end{Bsp}
+    \vspace{0.5em}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item An estimator of $\widebar{y}_{U_d}$ is
+            \begin{equation*}
+                \widebar{y}_{d}
+                =
+                \frac{\sum_{i \in s_d} y_i}{n_d},
+                \qquad n_d > 0.
+            \end{equation*}
+        \item This estimator is a \alert{ratio} of two estimated totals; see
+            Chapter 7.
+        \item Although this estimator has the form of a ratio of two estimated
+            totals, it has a useful special property under \SRS.
+        \item \alert{Conditional} on $n_d = m > 0$, the domain sample $s_d$ is
+            an \alert{\SRS of size $m$ from $U_d$}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item Hence,
+            \begin{equation*}
+                \EE_p\big(\widebar{y}_d \mid n_d = m\big) =
+                    \widebar{y}_{U_d}.
+            \end{equation*}
+        \item Thus, $\widebar{y}_d$ is unbiased for the domain mean,
+            \alert{conditional} on observing at least one unit from the domain.
+        \item The main difficulty with an \alert{unplanned domain} is that
+            $n_d$ is random.
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{8pt}
+                \item If the domain is small, $n_d$ may be small, resulting in
+                    \alert{low precision}.
+                \item It is even possible that $n_d = 0$, in which case
+                    $\widebar{y}_d$ cannot be computed.
+            \end{itemize}
+        \item If reliable estimates are required for a particular domain, it
+            should, whenever possible, be taken into account when designing the
+            sample (\alert{planned domain}; see Chapter 4).
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize Appendix: Determining the required sample size
+    (derivation)}
+     \begin{itemize}
+     \setlength{\itemsep}{6pt}
+
+        \item Let $\props$ denote the estimator of the population proportion
+            $\propu$ under the design $p_{\mSRS}$. Ignoring the finite
+             population correction, its estimated standard error is
+            \begin{equation*}
+                \widehat{\se}\big(\props,\big) =
+                \sqrt{\frac{\props(1-\props)}{n_0-1}}
+                \approx
+                \sqrt{\frac{\props(1-\props)}{n_0}}, \tag{C.1}
+            \end{equation*}
+            where the approximation is appropriate when $n_0$ is sufficiently
+             large.
+
+        \item The precision requirement can now be stated as follows:
+            \alert{Choose the sample size such that}
+            \begin{equation*}
+                \PP\big(\vert \props - \propu \, \vert > \epsilon \big) \leq
+                \alpha, \tag{C.2}
+            \end{equation*}
+
+            \vspace{-0.25em}
+
+            \noindent where the probability $\alpha$ (e.g., 5\%) and the
+             \alert{margin of error} $\epsilon > 0$ are specified in advance.
+     \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item The requirement in (C.2) is \alert{equivalent} to
+            \begin{equation*}
+                \PP\bigl(\lvert\props-\propu\rvert\leq\epsilon\bigr)
+                \geq 1-\alpha.
+            \end{equation*}
+        \item For sufficiently large sample sizes, the \alert{central limit
+            theorem} gives
+            \begin{equation*}
+                Z = \frac{\props-\propu}
+                {\widehat{\se}(\props)}
+                \approx N(0,1).
+            \end{equation*}
+        \item Hence, using the \alert{symmetry} of the standard normal
+            distribution,
+            \begin{equation*}
+                \frac{\epsilon}{\widehat{\se}(\props)}
+                \geq z_{1-\alpha/2},
+                \tag{C.3}
+            \end{equation*}
+            where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$ quantile of the $N(0,1)$
+            distribution.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{0pt}
+        \item Substituting the approximation from (C.1) into (C.3) gives the
+            initial sample size
+            \begin{equation*}
+                n_0 =
+                \frac{P_0(1-P_0)\,z_{1-\alpha/2}^2}{\epsilon^2}, \tag{C.4}
+            \end{equation*}
+            where $P_0$ is an \alert{anticipated value} of the population
+            proportion. If the sampling fraction $n_0/N$ is not negligible, the
+            \alert{finite population correction} gives
+            \begin{equation*}
+                n =
+                \frac{n_0}{1+(n_0-1)/N}. \tag{C.5}
+            \end{equation*}
+        \item Substituting (C.4) into (C.5) gives
+            \begin{equation*}
+                n \geq \frac{N P_0(1-P_0)z_{1-\alpha/2}^2}{
+                    \epsilon^2(N-1) + P_0(1-P_0)z_{1-\alpha/2}^2}.
+            \end{equation*}
+        \item The resulting sample size is rounded up to the next integer.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\setcounter{section}{\the\numexpr\value{section}-1\relax}
+\begin{frame}
+    \frametitle{Literature}
+    {\footnotesize
+        \setstretch{1.1}
+        \bibliographystyle{fhnw_en}
+        \bibliography{master}
+    }
+\end{frame}
+% -----------------------------------------------------------------------------
+\lastpage
+
+\end{document}

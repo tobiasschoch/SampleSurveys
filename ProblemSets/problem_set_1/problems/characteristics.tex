@@ -1,0 +1,158 @@
+%\SweaveUTF8
+
+
+
+
+\setkeys{Gin}{width=\textwidth}
+
+\begin{Problem}[Population Characteristics]\label{problem:characteristics}
+    We use the dataset \code{sepe.dat}, which contains data for a
+    fictitious (sub-) population of firms:
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+                     header = TRUE)
+\end{Sinput}
+\end{Schunk}
+
+
+    The dataset contains the number of full-time employees (\code{empl}),
+    environmental protection expenditures (\code{expend}), and an indicator for
+    industry class 31 (\code{code = 1}).
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item Compute the total environmental protection expenditures, the mean
+        expenditures per firm, the expenditures per employee in the population,
+        and the mean of the firm-level expenditures per employee.
+
+    \begin{Solution}
+        We attach the data to the search space.
+
+\begin{Schunk}
+\begin{Sinput}
+> attach(sepe)
+\end{Sinput}
+\end{Schunk}
+
+        The requested quantities are:
+
+        \begin{itemize}
+            \item Total expenditures:
+
+\begin{Schunk}
+\begin{Sinput}
+> sum(expend)
+\end{Sinput}
+\begin{Soutput}
+[1] 68765270
+\end{Soutput}
+\end{Schunk}
+
+            \item Mean expenditures per firm:
+
+\begin{Schunk}
+\begin{Sinput}
+> mean(expend)
+\end{Sinput}
+\begin{Soutput}
+[1] 85956.59
+\end{Soutput}
+\end{Schunk}
+
+            \item Expenditures per employee in the population:
+
+\begin{Schunk}
+\begin{Sinput}
+> sum(expend) / sum(empl)
+\end{Sinput}
+\begin{Soutput}
+[1] 446.0035
+\end{Soutput}
+\end{Schunk}
+
+            \item Mean firm-level expenditures per employee:
+
+\begin{Schunk}
+\begin{Sinput}
+> mean(expend[empl > 0] / empl[empl > 0])
+\end{Sinput}
+\begin{Soutput}
+[1] 1205.779
+\end{Soutput}
+\end{Schunk}
+        \end{itemize}
+
+        \begin{Remark}
+            Three of the 800 firms have no recorded full-time employees, so
+            their firm-level expenditures per employee are undefined. If these
+            zeros are treated as missing values, the last mean can be computed
+            from firms with positive recorded employment. This implicitly
+            assumes that the omitted firms would have the same average ratio as
+            the observed firms.
+        \end{Remark}
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Compute the population variance of the number of employees
+        $\varu_{\mathrm{empl}}$, the population variance of expenditures
+        $\varu_{\mathrm{expend}}$, and their correlation.
+
+    \begin{Solution}
+        Since the dataset contains the full population, use the population
+        variance with denominator $N$:
+
+        \begin{itemize}
+            \item Variance of the number of employees:
+
+\begin{Schunk}
+\begin{Sinput}
+> mean((empl - mean(empl))^2)
+\end{Sinput}
+\begin{Soutput}
+[1] 36995.87
+\end{Soutput}
+\end{Schunk}
+
+            \item Variance of expenditures:
+
+\begin{Schunk}
+\begin{Sinput}
+> mean((expend - mean(expend))^2)
+\end{Sinput}
+\begin{Soutput}
+[1] 4632073291
+\end{Soutput}
+\end{Schunk}
+
+            \item Correlation between the number of employees and expenditures:
+
+\begin{Schunk}
+\begin{Sinput}
+> cor(empl, expend)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.6597878
+\end{Soutput}
+\end{Schunk}
+        \end{itemize}
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Compute the proportion $\propu_{31}$ of firms in industry class 31.
+
+    \begin{Solution}
+        Since \code{code} is a binary indicator, the proportion is its mean:
+
+\begin{Schunk}
+\begin{Sinput}
+> mean(code)
+\end{Sinput}
+\begin{Soutput}
+[1] 0.1725
+\end{Soutput}
+\end{Schunk}
+    \end{Solution}
+\end{Subtask}
+\end{Problem}

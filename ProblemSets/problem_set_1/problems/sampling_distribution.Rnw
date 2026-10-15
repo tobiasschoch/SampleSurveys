@@ -1,0 +1,141 @@
+%\SweaveUTF8
+
+<<setRopts, echo=FALSE>>=
+options(width = 80, prompt = "> ", continue = " ")
+options(SweaveHooks = list(fig = function() par(mar = c(5, 4, 4, 2))))
+@
+\SweaveOpts{engine = R, keep.source = TRUE, strip.white = true}
+\SweaveOpts{eps = FALSE, pdf = TRUE, width = 9, height = 6}
+\SweaveOpts{prefix.string=fig}
+\setkeys{Gin}{width=\textwidth}
+
+\begin{Problem}[Sampling distribution]\label{problem:sampling}
+    Consider the population $U = \{1, 2, \ldots, 8\}$ of size $N = 8$.
+    The values of the variable $y$ are
+
+\begin{Scode}
+y <- c(1, 2, 3, 3, 7, 8, 8, 8)
+\end{Scode}
+
+    We are interested in the population total
+    $\ty = \sum_{i \in U} y_i$. From a sample, estimate $\tys$ by
+    $\tys = N \mys$, where $\mys$ is the sample mean.
+
+    \vspace{0.25em}
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item Generate all simple random samples of size $n = 4$ from $U$ without
+        replacement. Denote the set of all such samples by $\mathscr{S}_4$. For
+        each $s \in \mathscr{S}_4$, compute $\tys(s)$ and use the resulting
+        values to obtain the sampling distribution of $\tys$.
+
+        \begin{Rhint}
+            Use the functions \code{combn()} and \code{choose()}.
+        \end{Rhint}
+
+    \begin{Solution}
+        Define the population and the sample size:
+
+<<>>=
+N <- 8
+U <- 1:N
+y <- c(1, 2, 3, 3, 7, 8, 8, 8)
+n <- 4
+@
+
+        Generate all samples:
+
+<<>>=
+s4 <- combn(U, n)
+number_of_samples <- NCOL(s4)
+number_of_samples
+@
+
+        Alternatively, the number of samples can be computed as follows:
+
+<<>>=
+choose(N, n)
+@
+
+        Compute the estimate for each sample:
+
+<<>>=
+t_y <- apply(s4, 2, function(s) N * mean(y[s]))
+@
+
+        Because all samples are equally likely, the sampling distribution is
+
+<<>>=
+distr <- table(unname(t_y)) / number_of_samples
+distr
+@
+
+        For example, $\PP(\,\tys = 18)
+        = \Sexpr{round(distr[1], 8)}$.
+
+<<distr, fig = TRUE, include=FALSE, width=8, height=5>>=
+tot <- as.numeric(names(distr))
+prob <- as.numeric(distr)
+plot(tot, prob, type = "h", lwd = 2, xlab = expression(hat(tot)[y]),
+      ylab = "Probability")
+points(tot, prob, pch = 19, cex = 0.8)
+@
+
+        \begin{figure}[tbp]
+            \centering
+            \includegraphics{problems/fig-distr}
+            \caption{Sampling distribution of $\tys$}
+            \label{fig:distribution}
+        \end{figure}
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Using the results from part a), compute numerically
+        \begin{equation*}
+            \EE(\,\tys) = \sum_{s \in \mathscr{S}_4} p(s) \, \tys(s)
+        \end{equation*}
+        and
+        \begin{equation*}
+            \var(\,\tys) = \sum_{s \in \mathscr{S}_4} p(s)
+              \left\{\tys(s) - \EE(\tys)\right\}^2,
+        \end{equation*}
+        where $p(s) = 1/\binom{N}{n}$.
+
+        \vspace{0.25em}
+
+        Compare the numerical variance with the theoretical variance under
+        simple random sampling without replacement:
+        \begin{equation*}
+            \var(\,\tys) = N^2\left(1 - \frac{n}{N}\right) \frac{\varyu}{n},
+        \end{equation*}
+        where
+        \begin{equation*}
+            \varyu = \frac{1}{N - 1}\sum_{i\in U}(y_i - \myu)^2.
+        \end{equation*}
+
+    \begin{Solution}
+        Since all samples are equally likely,
+
+<<>>=
+identical(mean(t_y), sum(y))
+@
+
+        Hence $\EE(\,\tys) = \ty$: the estimator is unbiased.
+        The variance obtained from the sampling distribution is
+
+<<>>=
+mean((t_y - mean(t_y))^2)
+@
+
+        The theoretical variance of $\tys$ is
+
+<<>>=
+sigma2_y <- var(y)
+N^2 * (1 - n / N) * sigma2_y / n
+@
+
+        The two values are identical.
+    \end{Solution}
+\end{Subtask}
+\end{Problem}

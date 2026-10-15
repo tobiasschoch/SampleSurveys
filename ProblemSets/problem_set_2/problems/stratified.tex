@@ -1,0 +1,170 @@
+%\SweaveUTF8
+
+
+
+
+\setkeys{Gin}{width = \textwidth}
+
+\begin{Problem}[Stratified simple random sampling]
+    Use the file \code{sepe.dat} again. Define the stratum indicator \code{strat
+    = 1} for establishments with \code{empl} $\leq 250$ and \code{strat = 2}
+    otherwise. Also define \code{Nh}, which gives the population size of the
+    corresponding stratum for each establishment. Add both variables to the
+    data set.
+
+    Draw a stratified simple random sample without replacement, with
+    $n_1 = 100$ establishments from the first stratum and $n_2 = 50$ from the
+    second stratum. Estimate the population mean of environmental expenditures
+    and its standard error.
+
+    Finally, compare the estimated standard error with that from a simple
+    random sample of $n = 150$ establishments. For the simple random sample,
+    compute the standard error both with and without the finite population
+    correction.
+
+    \begin{Rhint}
+        Load the data \code{sepe.dat} data and define \code{strat} and
+        \code{Nh} as described above. Attach the \code{survey} package to the
+        search path and draw the stratified sample:
+
+
+\begin{Scode}
+library("survey")
+set.seed(11)
+sepe_sample <- sepe[stratsample(sepe$strat, c("1" = 100, "2" = 50)), ]
+\end{Scode}
+
+        The function \code{stratsample()} is provided by the \code{survey}
+        package. To reproduce the solution, use \code{set.seed(11)} before
+        drawing the sample. Next, define the survey design object by
+
+\begin{Scode}
+dn_sepe <- svydesign(ids = ~1, strata = ~strat, fpc = ~Nh,
+                     data = sepe_sample)
+\end{Scode}
+
+        Then use \code{svymean()} to estimate the population mean and
+        \code{SE()} to extract its estimated standard error.
+    \end{Rhint}
+
+\begin{Solution}
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+                     header = TRUE)
+\end{Sinput}
+\end{Schunk}
+
+    Define the strata and their population sizes:
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe$strat <- ifelse(sepe$empl <= 250, 1, 2)
+> Nh <- table(sepe$strat)
+> sepe$Nh <- as.numeric(Nh[as.character(sepe$strat)])
+> Nh
+\end{Sinput}
+\begin{Soutput}
+  1   2 
+580 220 
+\end{Soutput}
+\end{Schunk}
+
+    Draw the stratified sample:
+
+\begin{Schunk}
+\begin{Sinput}
+> library("survey")
+> set.seed(11)
+> idx <- stratsample(sepe$strat, c("1" = 100, "2" = 50))
+> sepe_sample <- sepe[idx, ]
+> table(sepe_sample$strat)
+\end{Sinput}
+\begin{Soutput}
+  1   2 
+100  50 
+\end{Soutput}
+\end{Schunk}
+
+    Define the design and estimate the population mean:
+
+\begin{Schunk}
+\begin{Sinput}
+> dn_sepe <- svydesign(ids = ~1, strata = ~strat, fpc = ~Nh,
+                       data = sepe_sample)
+> m_y <- svymean(~expend, dn_sepe)
+> m_y
+\end{Sinput}
+\begin{Soutput}
+        mean     SE
+expend 86472 4019.5
+\end{Soutput}
+\begin{Sinput}
+> SE(m_y)
+\end{Sinput}
+\begin{Soutput}
+         expend
+expend 4019.504
+\end{Soutput}
+\end{Schunk}
+
+    Thus, the estimated standard error of the stratified estimator is
+    4'020.
+
+%FIXME: use survey; see bottom; above: use dn_stsi instead of dn_sepe
+
+
+    \begin{Remark}
+        For comparison, we draw a separate SRS of size $150$:
+
+\begin{Schunk}
+\begin{Sinput}
+> set.seed(11)
+> srs_sample <- sepe[sample(seq_len(nrow(sepe)), size = 150), ]
+\end{Sinput}
+\end{Schunk}
+
+        We add population size to \code{srs\_sample} and define the design
+        object:
+
+\begin{Schunk}
+\begin{Sinput}
+> srs_sample$N <- 800
+> dn_srs <- svydesign(ids = ~1, fpc = ~N, data = srs_sample)
+\end{Sinput}
+\end{Schunk}
+
+        Ror the SRS sample, the estimated std. err. of the mean is
+
+\begin{Schunk}
+\begin{Sinput}
+> SE(svymean(~expend, dn_srs))
+\end{Sinput}
+\begin{Soutput}
+         expend
+expend 4729.543
+\end{Soutput}
+\end{Schunk}
+
+        which is considerably large than the estimated std. err. in case of the
+        stratified sample, which is (approximately)
+        4'020.
+
+        \vspace{0.5em}
+
+%         Note: A stratified sample can also be drawn using base \textsf{R} only.
+%         For example:
+
+% <<>>=
+% set.seed(11)
+% idx <- unlist(mapply(
+%     sample,
+%     split(seq_len(nrow(sepe)), sepe$strat),
+%     c(100, 50),
+%     SIMPLIFY = FALSE
+% ))
+% @
+    \end{Remark}
+\end{Solution}
+\end{Problem}

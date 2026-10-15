@@ -1,0 +1,365 @@
+%\SweaveUTF8
+
+
+
+\setkeys{Gin}{width=\textwidth}
+
+\begin{Problem}[Simple random sampling]
+    We use the data set \code{sepe.dat} from Problem Set 1.
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item Draw a simple random sample without replacement (SRS) of size $n =
+        200$ from the \code{sepe.dat} population, which is of size $N = 800$.
+        Estimate
+        \begin{enumerate}[i)]
+            \item the mean sepeironmental protection expenditure per
+                establishment, $\bar{y}_U$;
+            \item total expenditure, $\ty$;
+            \item mean expenditure per employee among establishments with at
+                least one employee,
+                \begin{equation*}
+                    \bar{q}_{U+} = \frac{1}{N_+}\sum_{i \in U_+}\frac{y_i}{x_i},
+                    \qquad
+                    U_+ = \{i \in U:x_i>0\}.
+                \end{equation*}
+        \end{enumerate}
+        Here, $y_i$ denotes expenditure and $x_i$ the number of full-time
+        employees of establishment $i$. Also estimate the standard error of
+        each estimator.
+
+        Compare the estimated standard errors with the corresponding
+        population-based standard errors. For the sample mean, also compare
+        the estimated variance with the Monte Carlo (MC) variance from Problem
+        1.3a).
+
+        \begin{Rhint}
+            Write down the three estimators before doing the calculations in R.
+            To reproduce the solution, use \code{set.seed(11)} before drawing
+            the sample. A sample of indices can then be obtained with
+
+\begin{Scode}
+N <- NROW(sepe)
+in_sample <- sample(N, 200)
+sepe_sample <- sepe[in_sample, ]
+\end{Scode}
+        \end{Rhint}
+
+    \begin{Solution}
+        First load the population and draw the sample.
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+                     header = TRUE)
+\end{Sinput}
+\end{Schunk}
+
+
+
+
+\begin{Schunk}
+\begin{Sinput}
+> N <- NROW(sepe)
+> set.seed(11)
+> n <- 200
+> in_sample <- sample(N, n)
+> sepe_sample <- sepe[in_sample, ]
+> fpc <- 1 - n / N
+\end{Sinput}
+\end{Schunk}
+
+        \begin{enumerate}[i)]
+            %------------------------------
+            \item \textbf{Mean expenditure.} The estimator and its estimated
+                standard error are
+
+\begin{Schunk}
+\begin{Sinput}
+> m_y <- mean(sepe_sample$expend)
+> m_y
+\end{Sinput}
+\begin{Soutput}
+[1] 82508.45
+\end{Soutput}
+\begin{Sinput}
+> se_m_y <- sqrt(fpc * var(sepe_sample$expend) / n)
+> se_m_y
+\end{Sinput}
+\begin{Soutput}
+[1] 3964.578
+\end{Soutput}
+\end{Schunk}
+
+                Using the complete finite population, the standard error is
+
+\begin{Schunk}
+\begin{Sinput}
+> SE_m_y <- sqrt(fpc * var(sepe$expend) / n)
+> SE_m_y
+\end{Sinput}
+\begin{Soutput}
+[1] 4170.373
+\end{Soutput}
+\end{Schunk}
+
+                The Monte Carlo variance from Problem 1.3a) was 17479711; thus,
+                the MC estimate of standard error is
+
+\begin{Schunk}
+\begin{Sinput}
+> sqrt(17479711)
+\end{Sinput}
+\begin{Soutput}
+[1] 4180.874
+\end{Soutput}
+\end{Schunk}
+
+                The two standard errors are very close.
+
+            %------------------------------
+            \item \textbf{Total expenditure.} Since $\tys=N\mys$, estimate,
+                (theoretical) standard error, and estimated standard error are:
+
+\begin{Schunk}
+\begin{Sinput}
+> t_y <- N * m_y
+> t_y
+\end{Sinput}
+\begin{Soutput}
+[1] 66006760
+\end{Soutput}
+\begin{Sinput}
+> se_t_y <- N * se_m_y
+> se_t_y
+\end{Sinput}
+\begin{Soutput}
+[1] 3171662
+\end{Soutput}
+\begin{Sinput}
+> SE_t_y <- N * SE_m_y
+> SE_m_y
+\end{Sinput}
+\begin{Soutput}
+[1] 4170.373
+\end{Soutput}
+\end{Schunk}
+
+            %------------------------------
+            \item \textbf{Mean expenditure per employee.} Restrict attention
+                to establishments with at least one employee. Conditional on
+                the number $n_+$ of such establishments in the sample, they
+                form an SRS from $U_+$. Thus, the usual SRS variance formula
+                applies within this subpopulation.
+
+                Restrict data and variables to cases with at least one
+                employee:
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe_pos <- sepe[sepe$empl > 0, ]
+> sepe_sample_pos <- sepe_sample[sepe_sample$empl > 0, ]
+> N_pos <- NROW(sepe_pos)
+> n_pos <- NROW(sepe_sample_pos)
+\end{Sinput}
+\end{Schunk}
+
+                Define the expenditure-per-employee variable for establishments
+                with at least one employee:
+
+\begin{Schunk}
+\begin{Sinput}
+> q <- sepe_sample_pos$expend / sepe_sample_pos$empl
+> q_pop <- sepe_pos$expend / sepe_pos$empl
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> fpc_pos <- 1 - n_pos / N_pos
+\end{Sinput}
+\end{Schunk}
+
+                The estimator and its estimated standard error are
+
+\begin{Schunk}
+\begin{Sinput}
+> m_q <- mean(q)
+> m_q
+\end{Sinput}
+\begin{Soutput}
+[1] 1151.237
+\end{Soutput}
+\begin{Sinput}
+> se_m_q <- sqrt(fpc_pos * var(q) / n_pos)
+> se_m_q
+\end{Sinput}
+\begin{Soutput}
+[1] 148.2974
+\end{Soutput}
+\end{Schunk}
+
+                The corresponding population-based standard error is
+
+\begin{Schunk}
+\begin{Sinput}
+> SE_m_q <- sqrt(fpc_pos * var(q_pop) / n_pos)
+> SE_m_q
+\end{Sinput}
+\begin{Soutput}
+[1] 176.0603
+\end{Soutput}
+\end{Schunk}
+
+        \end{enumerate}
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \vspace{0.5em}
+    \item Repeat the three estimates from part a) using the R package
+        \code{survey} and the sample \code{sepe_sample}.
+
+        \begin{Rhint}
+            Attach the \code{survey} package to the search path, add the
+            population size $N$ to the sample data, and define the survey
+            design object \code{dn\_sepe}:
+
+\begin{Scode}
+library("survey")
+sepe_sample$N <- N
+dn_sepe <- svydesign(ids = ~1, fpc = ~N, data = sepe_sample)
+\end{Scode}
+
+            The argument \code{ids = ~1} specifies a design without clustering.
+            Supplying \code{fpc = ~N} incorporates sampling without replacement
+            from a population of size $N$.
+
+            New variables can be added to a design object with \code{update()}.
+            A design object can be restricted to a subpopulation using
+            \code{subset()}.
+
+            Use \code{svymean()} to estimate population means and
+            \code{svytotal()} to estimate population totals. Their basic syntax
+            is
+\begin{Scode}
+svymean(~variable, design)
+svytotal(~variable, design)
+\end{Scode}
+            The first argument is an R formula specifying the variable to be
+            analyzed. The tilde \code{~} is part of the formula syntax; for
+            example, \code{~expend} specifies the variable \code{expend}. The
+            second argument is the survey design object containing the sample
+            data and the information about the sampling design.
+
+            The functions return objects containing both the estimates and
+            information about their sampling variability. The corresponding
+            methods \code{coef()}, \code{SE()}, and \code{cv()} extract the
+            point estimates, standard errors, and coefficients of variation,
+            respectively.
+        \end{Rhint}
+
+    \begin{Solution}
+        Define the survey design.
+
+\begin{Schunk}
+\begin{Sinput}
+> library("survey")
+> sepe_sample$N <- N
+> dn_sepe <- svydesign(ids = ~1, fpc = ~N, data = sepe_sample)
+\end{Sinput}
+\end{Schunk}
+
+        The mean and total expenditure are obtained directly:
+
+\begin{Schunk}
+\begin{Sinput}
+> svymean(~expend, dn_sepe)
+\end{Sinput}
+\begin{Soutput}
+        mean     SE
+expend 82508 3964.6
+\end{Soutput}
+\begin{Sinput}
+> svytotal(~expend, dn_sepe)
+\end{Sinput}
+\begin{Soutput}
+          total      SE
+expend 66006760 3171662
+\end{Soutput}
+\end{Schunk}
+
+        For mean expenditure per employee, restrict the design to
+        establishments with at least one employee and then define the ratio.
+
+\begin{Schunk}
+\begin{Sinput}
+> dn_pos <- subset(dn_sepe, empl > 0)
+> dn_pos <- update(dn_pos, q = expend / empl)
+> svymean(~q, dn_pos)
+\end{Sinput}
+\begin{Soutput}
+    mean     SE
+q 1151.2 148.14
+\end{Soutput}
+\end{Schunk}
+
+        The estimates agree with part a), apart from possible differences in
+        the variance calculation for the domain mean.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \vspace{0.5em}
+    \item Using the design from part b), construct a 95\,\% Wald and a
+        logit-based confidence interval for the population proportion $P_{31}$
+        of establishments in industry class 31, identified by \code{code = 1}.
+        Use \code{svyciprop()}.
+
+        \begin{Rhint}
+            A normal-based Wald interval on the probability scale is obtained
+            with
+
+\begin{Scode}
+svyciprop(~code, dn_sepe, method = "mean", level = 0.95, df = Inf)
+\end{Scode}
+
+            Setting \code{df = Inf} specifies that the confidence interval
+            should use the standard normal distribution rather than a Student
+            $t$-distribution based on the design degrees of freedom.
+
+            Using \code{method = "logit"} instead gives a logit-based
+            confidence interval. The logit interval respects the natural bounds
+            of a proportion and can better accommodate asymmetry when the
+            estimated proportion is close to 0 or 1.
+        \end{Rhint}
+
+    \begin{Solution}
+        The Wald interval is
+
+\begin{Schunk}
+\begin{Sinput}
+> ci_p31 <- svyciprop(~code, dn_sepe, method = "mean", level = 0.95, df = Inf)
+> ci_p31
+\end{Sinput}
+\begin{Soutput}
+            2.5% 97.5%
+code 0.170 0.125 0.215
+\end{Soutput}
+\end{Schunk}
+
+        For comparison, a logit-based interval is
+
+\begin{Schunk}
+\begin{Sinput}
+> svyciprop(~code, dn_sepe, method = "logit", level = 0.95, df = Inf)
+\end{Sinput}
+\begin{Soutput}
+            2.5% 97.5%
+code 0.170 0.129 0.220
+\end{Soutput}
+\end{Schunk}
+
+        The two intervals need not be identical because they use different
+        transformations.
+    \end{Solution}
+\end{Subtask}
+\end{Problem}

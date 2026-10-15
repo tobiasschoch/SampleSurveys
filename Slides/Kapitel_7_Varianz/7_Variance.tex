@@ -1,0 +1,413 @@
+\documentclass{my_eth_beamer}
+
+\usepackage{my_math_eth}
+
+\numberwithin{equation}{section}
+
+% -----------------------------------------------------------------------------
+% this document
+\title{Introduction to Survey Sampling}
+\newcommand{\TITLE}{Variance Estimation}
+\newcommand{\NR}{7}
+\subtitle{Part \NR: \TITLE}
+\author[Tobias Schoch]{Tobias Schoch}
+\date{2024}
+
+% -----------------------------------------------------------------------------
+\begin{document}
+
+\section{\TITLE}\label{sec:variance}
+\setcounter{section}{\NR}
+\setcounter{Bsp}{19}
+\setcounter{Def}{13}
+\setcounter{EinSatz}{1}
+
+\setstretch{1.1}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{Overview}
+    \noindent \hspace{0.2em}\textcolor{fhnwblue}{\bfseries \NR~\TITLE}
+    \begin{enumerate}[\NR.1]
+    \setlength{\itemsep}{4pt}
+        \item Taylor Series Expansion (Linearization)
+        \item Resampling Methods
+            \begin{enumerate}[a)]
+            \setlength{\itemsep}{4pt}
+                \item Bootstrap
+                \item Jackknife
+            \end{enumerate}
+    \end{enumerate}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber~\insertsection}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item The variance estimators introduced in Chapters 2--6 were derived
+            for estimators of population totals and means, but not directly
+            apply for estimators of \alert{nonlinear} population
+            characteristics.
+        \item An important \alert{class} of nonlinear characteristics can be
+            written as a \alert{function} of a vector of population totals,
+            \begin{equation*}
+                \bold t = (t_1, \ldots, t_q)^T, \qquad q \geq 1.
+            \end{equation*}
+        \item The best-known member of this class is the \alert{population
+            ratio} of two totals, $\rat = g(\bold t)$, with $\bold
+            t=(\ty,\tx)^T$, given by (provided that $\tx \neq 0$)
+            \begin{equation*}
+                \rat(\bold t) = \frac{\ty}{\tx} = \frac{\myu}{\mx}.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item For the remainder of this section, assume an \SRS of size $n$.
+        \item The estimator
+            \begin{equation*}
+            \widehat R = \frac{\widehat t_y}{\widehat t_x}
+            \end{equation*}
+            is commonly referred to as the \alert{ratio estimator}. It is
+            generally \alert{biased} for $\rat$.
+        \item The \alert{absolute bias relative to the standard error} is
+            bounded above by \citep{hartley_ross_1954}
+            \begin{equation*}
+                \frac{\big\vert \bias\big(\rats\,\big) \big\vert}{%
+                    \se\big(\rats\,\big)} \leq
+                    \sqrt{\frac{1}{n} - \frac{1}{N}} \varcoef_x,
+            \end{equation*}
+            where $\varcoef_x = \sigma_x / \mx$ is the coefficient of
+            variation.
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{10pt}
+                \item[\goto] Thus, the bias is small relative to the
+                    estimator's standard error when the sample is sufficiently
+                    large and $\varcoef_x$ is not too large.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{Taylor Series Expansion (Linearization)}
+
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item We restrict attention to the ratio estimator $\rats$ under
+            \SRS. The same idea applies to other nonlinear characteristics
+            that are differentiable functions of population totals.
+        \item Write
+            \begin{equation*}
+                \rats = g(\mys,\mxs), \qquad g(a,b)=\frac{a}{b},
+            \end{equation*}
+            where $\mys$ and $\mxs$ are the sample means.
+        \item A first-order \alert{Taylor expansion} around
+            $(\myu, \mx)$ gives
+            \begin{equation}\label{eq:variance_taylor}
+                \rats = \rat + \frac{1}{\mx} \big(\mys - \rat\, \mxs\big)
+                + \op\big(n^{-1/2}\big).
+            \end{equation}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{9pt}
+        \item Let $r_n$ denote the remainder in the Taylor expansion. Under the
+            asymptotic framework introduced in Chapter 2,
+            \begin{equation*}
+                r_n = \op\big(n^{-1/2}\big)
+                \qquad \text{means that} \qquad
+                \frac{r_n}{n^{-1/2}} \; \xrightarrow{p} \; 0.
+            \end{equation*}
+        \item Ignoring the remainder in (\ref{eq:variance_taylor}) gives the
+            \alert{linearization}
+            \begin{equation*}
+                \rats_0 = \rat + \frac{1}{\mx} \big(\mys-\rat\,\mxs\big).
+            \end{equation*}
+        \item Define the \alert{linearized variable}
+            \begin{equation*}
+                z_i = y_i - \rat x_i.
+            \end{equation*}
+            Then
+            \begin{equation*}
+                \rats_0 - \rat = \frac{\bar z}{\mx},
+                \qquad
+                \var(\rats) \approx \var(\rats_0) =
+                \frac{1}{\mx^2}\var(\bar z).
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{9pt}
+        \item Under \SRS, the linearization yields
+            \begin{equation*}
+                \var(\rats) \approx \var(\rats_0) =
+                \left(1-\frac{n}{N}\right)
+                \frac{\sigma_z^2}{n\,\mx^2},
+            \end{equation*}
+            where $\sigma_z^2$ is the population variance of the linearized
+            variable.
+        \item Since $\rat$ and $\mx$ are unknown, define the
+            \alert{estimated linearized variable}
+            \begin{equation*}
+                \widehat z_i = y_i - \rats x_i.
+            \end{equation*}
+        \item A corresponding \alert{variance estimator} is
+            \begin{equation*}
+                \widehat{\var}(\rats) =
+                \left(1-\frac{n}{N}\right)
+                \frac{\widehat{\sigma}_{\,\widehat{z}}^{\,2}}{n\,\mxs^2},
+                \qquad \text{where} \qquad
+                \widehat{\sigma}_{\,\widehat z}^{\,2} =
+                \frac{1}{n-1}
+                \sum_{i\in s}\widehat z_i^{\,2}.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item Under suitable regularity conditions, Taylor linearization can
+            also be applied to \alert{complex sampling designs}; see, e.g.,
+            \citet[][Chapter 2.1]{fuller_2009}.
+
+        \item A main \alert{disadvantage} is that the linearized variable must
+            be derived for each nonlinear estimator separately. This can
+            become cumbersome for complex estimands and sampling designs.
+
+        \item \alert{Resampling methods} provide an alternative approach to
+            variance estimation that often requires less estimator-specific
+            derivation.
+    \end{itemize}
+\end{frame}
+
+\subsection{Resampling Methods}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{9pt}
+        \item \alert{Resampling methods} estimate the variance of an estimator
+            by repeatedly constructing \alert{replicate samples} from the
+            observed sample and recomputing the estimator.
+        \item Their main advantage is that they often avoid
+            \alert{estimator-specific analytical derivations}, such as those
+            required for Taylor linearization.
+        \item The price is additional \alert{computational effort}, especially
+            for complex sampling designs.
+        \item We consider two resampling methods:
+            \vspace{0.25em}
+            \begin{enumerate}[a)]
+            \setlength{\itemsep}{4pt}
+                \item Bootstrap
+                \item Jackknife
+            \end{enumerate}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \noindent\textcolor{fhnwblue}{\bfseries \large Bootstrap}
+
+    \vspace{0.5em}
+
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item Let $s$ be an \SRS of size $n$ and let $\widehat{\theta}$ be an
+            estimator of the population characteristic $\theta_U$.
+        \item Choose the number of \alert{bootstrap replicates} $B$.
+        \item For each $b = 1, \ldots, B$:
+            \vspace{0.25em}
+            \begin{enumerate}
+            \setlength{\itemsep}{7pt}
+                \item Draw a \alert{bootstrap sample} $s_b^*$ of size $n$
+                    from $s$, sampling \alert{with replacement}.
+                \item Compute the estimator from $s_b^*$ and denote the result
+                    by $\widehat{\theta}_b^*$.
+            \end{enumerate}
+        \item The resulting values
+            $\widehat{\theta}_1^*,\ldots,\widehat{\theta}_B^*$
+            approximate the sampling variability of $\widehat{\theta}$.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{9pt}
+        \item The \alert{bootstrap variance estimator} is the sample variance
+            of the replicate estimates:
+            \begin{equation*}
+                \widehat{\var}_{\mathrm{boot}\;}(\widehat{\theta}) =
+                \frac{1}{B-1}
+                \sum_{b=1}^B
+                \left(\widehat{\theta}_b^*
+                -\widebar{\theta}^{\,*}\right)^2, \qquad
+                \widebar{\theta}^{\,*} =
+                \frac{1}{B}\sum_{b=1}^B\widehat{\theta}_b^*.
+            \end{equation*}
+        \item Under \SRS, the ordinary bootstrap is appropriate when the
+            \alert{sampling fraction}
+            \begin{equation*}
+            f=\frac{n}{N}
+            \end{equation*}
+
+            \vspace{-1.5em}
+
+            is small.
+        \item If $f$ is not small, sampling without replacement produces less
+            variability than the ordinary bootstrap. For smooth estimators,
+            this can be accounted for approximately by the \alert{finite
+            population correction} \citep[][Chapter 5]{wolter_2007}
+            \vspace{-0.5em}
+            \begin{equation*}
+                (1-f)\, \widehat{\var}_{\mathrm{boot}}(\widehat{\theta}).
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize{Bootstrap for Stratified Sampling}}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item For a stratified design, the bootstrap should
+            \alert{preserve the stratification}.
+        \item For each bootstrap replicate $b=1,\ldots,B$:
+            \vspace{0.25em}
+            \begin{enumerate}
+            \setlength{\itemsep}{5pt}
+                \item Within each stratum $h = 1, \ldots, H$, draw a bootstrap
+                    sample $s_{hb}^*$ of size $n_h$ from $s_h$, sampling
+                    \alert{with replacement}.
+                \item Combine the stratum-specific bootstrap samples and
+                    compute the replicate estimate $\widehat{\theta}_b^*$.
+            \end{enumerate}
+        \item If the stratum-specific sampling fractions $f_h = n_h / N_h$
+            are small, the ordinary within-stratum bootstrap provides a
+            useful approximation.
+        \item If the $f_h$ are not small, a single finite population
+            correction is generally \alert{not sufficient}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize{Rao--Wu Rescaling Bootstrap}}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item If the stratum-specific sampling fractions $f_h$ are not small,
+            the ordinary within-stratum bootstrap does not adequately reflect
+            sampling without replacement.
+        \item The \alert{Rao--Wu rescaling bootstrap} modifies the bootstrap
+            procedure to account for this; see \citet{rao_wu_1988}.
+        \item Each bootstrap replicate is associated with a set of adjusted
+            \alert{replicate weights}. The estimator is recomputed using these
+            weights, yielding replicate estimates
+            \begin{equation*}
+                \widehat{\theta}_1^*,\ldots,\widehat{\theta}_B^*.
+            \end{equation*}
+        \item The approach can be applied to many nonlinear estimators without
+            deriving a separate linearized variable, including estimators
+            based on \alert{quantiles}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\large Jackknife}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item Let $s$ be an \SRS of size $n$ from $U$.
+        \item We are interested in the variance of an estimator
+            $\widehat{\theta}$ of the characteristic $\theta_U$, where
+            $\theta_U$ is defined as a \alert{differentiable} function
+            $g(\bold t)$ of population totals $\bold t$.
+        \item \alert{Differentiability} of $g$ is a \emph{necessary}
+            condition \citep{krewski_rao_1981} for consistency of the
+            (delete-1) jackknife variance estimator.
+        \item In the \alert{delete-1 jackknife}, one observation at a time is
+            omitted from $s$, and the estimator is recomputed without that
+            observation. We write $\widehat{\theta}_{(-j)}$ for the estimator
+            $\widehat{\theta}$ computed \emph{without} the $j$th observation
+            ($j\in s$).
+        \item Example: For $\widehat{\theta}:=\mys$,
+            $\widehat{\theta}_{(-j)} = 1/(n-1)\sum_{i\in s\setminus j} y_i$.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{6pt}
+        \item The delete-1 jackknife \alert{variance estimator} for
+            $\widehat{\theta}$ is
+            \begin{equation}\label{eq:variance_jk}
+                \widehat{\var}_{\mathrm{JK}}(\widehat{\theta}\,) = \frac{n}{(n
+                - 1)} \sum_{j = 1}^n \left(\widehat{\theta}_{(-j)} -
+                \widehat{\theta}\,\right)^2.
+            \end{equation}
+
+            \vspace{-1.5em}
+
+        \item An \alert{alternative estimator} is obtained by replacing
+            $\widehat{\theta}$ in (\ref{eq:variance_jk}) by
+            $\widetilde{\theta}$, where
+            $\widetilde{\theta}=(1/n)\sum_{j=1}^n\widehat{\theta}_{(-j)}$;
+            see \citet[][p.~170]{wolter_2007}.
+        \item We denote this alternative estimator by
+            $\widehat{\var}_{\mathrm{JK^*}}$. For nonlinear estimators,
+            typically $\widehat{\theta}\neq\widetilde{\theta}$.
+        \item The variance estimators $\widehat{\var}_{\,\mathrm{JK}}$ and
+            $\widehat{\var}_{\,\mathrm{JK^*}}$ are reliable when the sampling
+            fraction $f$ is small.
+        \item If $f$ is \alert{not small}, both variance estimators can be
+            substantially biased. In this case, it is recommended to multiply
+            them by $(1-f)$; see \citep[][p.~167]{wolter_2007}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item The jackknife variance estimator can also be used with
+            \alert{complex designs}; see, e.g., \citet[][Chapter 4]{wolter_2007}.
+        \item The jackknife can also be generalized by deleting $d>1$
+            observations at a time, i.e., the \alert{delete-$d$ jackknife}.
+            \citet{shao_wu_1989} further showed that, with an appropriate
+            choice of $d$, the delete-$d$ jackknife variance estimator can be
+            consistent for statistics such as the median or a linear
+            combination of quantiles, unlike the delete-1 jackknife.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\setcounter{section}{\the\numexpr\value{section}-1\relax}
+\begin{frame}
+    \frametitle{References}
+    {\footnotesize
+        \setstretch{1.1}
+        \bibliographystyle{fhnw_en}
+        \bibliography{master}
+    }
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\lastpage
+
+\end{document}

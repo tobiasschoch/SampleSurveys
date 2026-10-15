@@ -1,0 +1,298 @@
+%\SweaveUTF8
+
+
+
+
+\setkeys{Gin}{width=\textwidth}
+
+\begin{Problem}[Planning a stratified sample]\label{problem:stsi_plan}
+    We \emph{plan} a survey to estimate the population mean of environmental
+    expenditures (\code{expend}). We want to assess whether stratification by
+    industry group (\code{code}) can improve precision relative to a simple
+    random sample without replacement (\SRS).
+
+    \vspace{0.5em}
+
+    We use the data set \code{sepe.dat} from Problem Set 1. Treat the data as
+    an \SRS of $n = 800$ establishments from a population of size $N = 3770$. We
+    focus on industry class 31, that is, the domain $U_{31}$ of size $N_{31} =
+    650$, identified with \code{code == 1}. Assume that:
+    \begin{itemize}
+        \item the planned net sample size is $n=800$ establishments;
+        \item the anticipated response rate is 80\,\% in both strata; and
+        \item the within-stratum variances of \code{empl} and \code{expend} can
+            be estimated from the existing \SRS \; \code{sepe.dat}.
+    \end{itemize}
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item Allocate the net sample \emph{proportionally} to the two strata.
+        Determine the required gross sample sizes and estimate the variance of
+        the stratified estimator of the population mean of expenditures.
+
+    \begin{Solution}
+        The population sizes are $N_{rest} = 3120$ for \code{code == 0} and
+        $N_{31} = 650$ for \code{code = =1}, so $N = 3770$.
+
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+                     header = TRUE)
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> Nh <- c("rest" = 3120, "31" = 650)
+> N <- sum(Nh)
+> Wh <- Nh / N
+> Wh
+\end{Sinput}
+\begin{Soutput}
+     rest        31 
+0.8275862 0.1724138 
+\end{Soutput}
+\end{Schunk}
+
+        Under proportional allocation,
+        \begin{equation*}
+            n_h \approx n \, \Wh, \qquad \Wh = \frac{\Nh}{N}.
+        \end{equation*}
+        We round the stratum sample sizes while keeping their sum equal to
+        $n = 800$.
+
+\begin{Schunk}
+\begin{Sinput}
+> n <- 800
+> n_prop <- round(n * Wh)
+> n_prop["rest"] <- n - n_prop["31"]
+> n_prop
+\end{Sinput}
+\begin{Soutput}
+rest   31 
+ 662  138 
+\end{Soutput}
+\end{Schunk}
+
+        Because the anticipated response rate is the same in both strata, the
+        gross sample can also be allocated proportionally. The total gross
+        sample size is $800/0.8 = 1000$.
+
+\begin{Schunk}
+\begin{Sinput}
+> response_rate <- 0.8
+> n_gross <- round(n / response_rate)
+> n_prop_gross <- round(n_gross * Wh)
+> n_prop_gross["rest"] <- n_gross - n_prop_gross["31"]
+> n_prop_gross
+\end{Sinput}
+\begin{Soutput}
+rest   31 
+ 828  172 
+\end{Soutput}
+\end{Schunk}
+
+        Thus, the required gross sample sizes are
+        828 establishments with \code{code == 0} and
+        172 with \code{code == 1}.
+
+        The variance of the stratified mean $\mystrat = \sum_{h = 1}^H \Wh \,
+        \myh$ is
+        \begin{equation*}
+            \var(\mystrat) = \sum_{h = 1}^H \Wh^2
+              \left(1 - \frac{n_h}{\Nh}\right)\frac{\varyh}{n_h}.
+        \end{equation*}
+        We estimate $\varyh$ using the existing simple random sample.
+
+\begin{Schunk}
+\begin{Sinput}
+> sigma2_y_h <- tapply(sepe$expend, sepe$code, var)
+> var_prop <- sum(Wh^2 * (1 - n_prop / Nh) * sigma2_y_h / n_prop)
+> var_prop
+\end{Sinput}
+\begin{Soutput}
+[1] 4423859
+\end{Soutput}
+\end{Schunk}
+
+        The estimated variance under proportional allocation is therefore
+        4'423'859.
+
+        \begin{Remark}
+            The response rate affects the \emph{gross} sample size, but the
+            variance calculation is based on the planned net sample sizes.
+            Using the general variance formula also avoids any approximation
+            caused by rounding the proportional allocation.
+        \end{Remark}
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \vspace{0.25em}
+    \item Now use a Neyman-type (optimum) allocation, but base the allocation
+        on the within-stratum standard deviations of the auxiliary variable
+        \code{empl} rather than on \code{expend}.
+        \begin{itemize}
+            \item Determine the required gross sample sizes.
+            \item Under what conditions is it reasonable to derive the
+                allocation from an auxiliary variable?
+            \item Estimate the variance of the stratified estimator of mean
+                environmental expenditures under this allocation.
+        \end{itemize}
+
+    \begin{Solution}
+        The Neyman allocation for a target variable $y$ is
+        \begin{equation*}
+            n_h = n \, \frac{\Wh \, \sigma_{y,h}^2}{\sum_{j = 1}^H W_j \,
+                \sigma_{y,j}^2}, \qquad h = 1, \ldots, H.
+        \end{equation*}
+
+        Here we deliberately replace $\sigma_{y,j}^2$ by the (estimates of)
+        within-stratum standard deviations of \code{empl}.
+
+\begin{Schunk}
+\begin{Sinput}
+> sigma_x_h <- tapply(sepe$empl, sepe$code, sd)
+> names(sigma_x_h) <- c("rest", "31")
+> alloc_x <- Wh * sigma_x_h
+> n_aux <- round(n * alloc_x / sum(alloc_x))
+> n_aux
+\end{Sinput}
+\begin{Soutput}
+rest   31 
+ 629  171 
+\end{Soutput}
+\begin{Sinput}
+> n_aux["rest"] <- n - n_aux["31"]
+> n_aux
+\end{Sinput}
+\begin{Soutput}
+rest   31 
+ 629  171 
+\end{Soutput}
+\end{Schunk}
+
+        The corresponding gross allocation is
+
+\begin{Schunk}
+\begin{Sinput}
+> n_aux_gross <- round(n_gross * alloc_x / sum(alloc_x))
+> n_aux_gross["rest"] <- n_gross - n_aux_gross["31"]
+> n_aux_gross
+\end{Sinput}
+\begin{Soutput}
+rest   31 
+ 787  213 
+\end{Soutput}
+\end{Schunk}
+
+        An auxiliary-variable allocation is useful when the pattern of
+        within-stratum variability of the auxiliary variable resembles that
+        of the target variable. More precisely, we would like $\sigma_{y,h}
+        \approx c \cdot \sigma_{x,h}$ with approximately the same positive
+        constant $c$ across strata. In that case, the allocation based on $x$
+        is close to the Neyman allocation for $y$. Historical values of the
+        target variable are a common example of a useful auxiliary variable.
+
+        The existing sample can be used to inspect this condition directly:
+
+\begin{Schunk}
+\begin{Sinput}
+> sigma_y_h <- sqrt(sigma2_y_h)
+> cbind(sigma_x_h = sigma_x_h, sigma_y_h = sigma_y_h,
+        ratio = sigma_y_h / sigma_x_h)
+\end{Sinput}
+\begin{Soutput}
+     sigma_x_h sigma_y_h    ratio
+rest   177.936  62525.73 351.3945
+31     231.377  85396.08 369.0776
+\end{Soutput}
+\end{Schunk}
+
+        The allocation was computed from \code{empl}, so its variance must be
+        evaluated using the \emph{actual} stratum sample sizes above and the
+        within-stratum variances of \code{expend}:
+
+\begin{Schunk}
+\begin{Sinput}
+> var_aux <- sum(Wh^2 * (1 - n_aux / Nh) * sigma2_y_h / n_aux)
+> var_aux
+\end{Sinput}
+\begin{Soutput}
+[1] 4332910
+\end{Soutput}
+\end{Schunk}
+
+        The estimated variance is therefore
+        4'332'910.
+
+        % \begin{Remark}
+        %     The closed-form minimum variance
+        %     \begin{equation*}
+        %         \frac{1}{n}\left(\sum_h \Wh \sigma_{y,h}\right)^2
+        %         - \frac{1}{N}\sum_h \Wh \sigma_{y,h}^2
+        %     \end{equation*}
+        %     applies when the allocation itself is based on $\sigma_{y,h}$. It
+        %     does not generally apply when the allocation is based on a
+        %     different variable such as \code{empl}.
+        % \end{Remark}
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \vspace{0.25em}
+    \item Compare the estimated variances from parts a) and b) with the
+        estimated variance under a simple random sample of $n=800$. Does
+        stratification improve precision?
+
+    \begin{Solution}
+        Let $\mys_{\mSRS}$ denote the sample mean for SRS. It holds that
+        \begin{equation*}
+            \widehat{\var}(\mys_{\mSRS}) =
+                \left(1 - \frac{n}{N}\right)\frac{\varyu}{n},
+        \end{equation*}
+        where $\varyu$ is estimated from \code{sepe.dat}.
+
+\begin{Schunk}
+\begin{Sinput}
+> var_srs <- (1 - n / N) * var(sepe$expend) / n
+> var_srs
+\end{Sinput}
+\begin{Soutput}
+[1] 4567134
+\end{Soutput}
+\end{Schunk}
+
+        The three planning variances are:
+
+\begin{Schunk}
+\begin{Sinput}
+> c(SRS = var_srs, proportional = var_prop, auxiliary = var_aux)
+\end{Sinput}
+\begin{Soutput}
+         SRS proportional    auxiliary 
+     4567134      4423859      4332910 
+\end{Soutput}
+\end{Schunk}
+
+        Relative to simple random sampling, the estimated variance reductions
+        are
+
+\begin{Schunk}
+\begin{Sinput}
+> 100 * c(proportional = 1 - var_prop / var_srs,
+         auxiliary = 1 - var_aux / var_srs)
+\end{Sinput}
+\begin{Soutput}
+proportional    auxiliary 
+    3.137084     5.128461 
+\end{Soutput}
+\end{Schunk}
+
+        percent. The auxiliary-variable allocation improves on proportional
+        allocation if $\widehat{\var}_{\auxalloc} <
+        \widehat{\var}_{\propalloc}$. Unlike a true Neyman allocation based on
+        \code{expend}, this ordering is not guaranteed because the allocation in
+        part b) is based on \code{empl}.
+    \end{Solution}
+\end{Subtask}
+\end{Problem}

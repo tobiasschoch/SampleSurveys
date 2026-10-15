@@ -1,0 +1,258 @@
+%\SweaveUTF8
+
+
+
+\setkeys{Gin}{width=\textwidth}
+
+\begin{Problem}[Domain estimation]\label{problem:domain}
+    We use the data set \code{sepe.dat} from Problem Set 1. Treat the data
+    as a simple random sample without replacement (\SRS) of $n = 800$
+    establishments from a population of size $N = 3770$. We focus on industry
+    class 31, that is, the domain $U_{31}$ identified by \code{code == 1}.
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item Assume that the domain size $N_{31}$ is unknown. Estimate the domain
+        population mean $\bar{y}_{U31}$ of environmental-protection
+        expenditures and its standard error.
+
+        \begin{Rhint}
+            If \code{dn} is a survey design created with \code{svydesign()},
+            use \code{subset(dn, code == 1)} to restrict the design to the
+            domain. Do not create a new \SRS design from the domain
+            observations: under the original \SRS, the domain sample size
+            $n_{31}$ is random.
+        \end{Rhint}
+
+    \begin{Solution}
+        First load the data set \code{sepe.dat}, which is an \SRS of size
+        $n=800$, and define the population size $N=3770$:
+
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+                     header = TRUE)
+> sepe$I31 <- as.integer(sepe$code == 1)
+> N <- 3770
+\end{Sinput}
+\end{Schunk}
+
+        \textbf{Calculation with the \code{survey} package:} First define the
+        survey design object for the full sample:
+
+\begin{Schunk}
+\begin{Sinput}
+> library("survey")
+> sepe$fpc <- N
+> dn_sepe <- svydesign(ids = ~1, fpc = ~fpc, data = sepe)
+\end{Sinput}
+\end{Schunk}
+
+        For domain estimation, it is important to distinguish between
+        subsetting a survey design object and creating a new design object from
+        the observations in the domain. The command
+
+\begin{Schunk}
+\begin{Sinput}
+> dn_sepe_31 <- subset(dn_sepe, I31 == 1)
+\end{Sinput}
+\end{Schunk}
+
+        retains the original sampling design. Thus, establishments in industry
+        class 31 are treated as a domain of the original \SRS of $n=800$
+        establishments. In particular, the number $n_{31}$ of sampled domain
+        units is random.
+
+        The domain population mean $\bar{y}_{U31}$ and its standard error are
+        estimated by
+
+\begin{Schunk}
+\begin{Sinput}
+> m_y_31 <- svymean(~expend, dn_sepe_31)
+> m_y_31
+\end{Sinput}
+\begin{Soutput}
+         mean     SE
+expend 113052 6432.8
+\end{Soutput}
+\end{Schunk}
+
+        By contrast, suppose that we first restrict the data to industry class
+        31 and then define a new design:
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe_31 <- subset(sepe, I31 == 1)
+> dn_sepe_31_new <- svydesign(ids = ~1, data = sepe_31)
+> svymean(~expend, dn_sepe_31_new)
+\end{Sinput}
+\begin{Soutput}
+         mean     SE
+expend 113052 7269.4
+\end{Soutput}
+\end{Schunk}
+
+        This specifies a different sampling design. It treats the $n_{31}$
+        observed establishments as if they formed a new equal-probability
+        sample, rather than a domain of the original \SRS. The estimated mean is
+        the same because both estimators reduce to the sample mean within the
+        domain. The estimated standard errors differ, however, because the two
+        design objects represent different sampling designs.
+
+        \begin{Remark}
+            Let $\indicator_{i,31} = \indicator\{i\in U_{31}\}$ denote the
+            domain indicator and let $s_{31} = s\cap U_{31}$. Then
+            \begin{equation*}
+                n_{31} = \sum_{i\in s}\indicator_{i,31}.
+            \end{equation*}
+            The domain mean is estimated by
+            \begin{equation*}
+                \bar{y}_{31} = \frac{\sum_{i\in s}\indicator_{i,31}\,y_i}{
+                    \sum_{i\in s}\indicator_{i,31}}
+                = \frac{1}{n_{31}}\sum_{i \in s_{31}}y_i.
+            \end{equation*}
+            Because $n_{31}$ is random under the original \SRS, this estimator
+            can be viewed as a ratio estimator. A linearization variance
+            estimator under \SRS is
+            \begin{equation*}
+                \widehat{\var}\left(\bar{y}_{31}\right) =
+                (1-f) \frac{n(n_{31} - 1)}{n_{31}^2(n - 1)} \,
+                    \widehat{\sigma}_{y,31}^2, \qquad f = \frac{n}{N},
+            \end{equation*}
+            where $\widehat{\sigma}_{y,31}^2$ is the sample variance of $y$
+            among the $n_{31}$ sampled domain units.
+
+            \textbf{Calculation with R:}
+
+\begin{Schunk}
+\begin{Sinput}
+> n31 <- sum(sepe$I31)
+> mean_y_31 <- mean(sepe$expend[sepe$I31 == 1])
+> sigma2_y_31 <- var(sepe$expend[sepe$I31 == 1])
+> se_mean_y_31 <- sqrt((1 - n / N) * n * (n31 - 1) /
+                      (n31^2 * (n - 1)) * sigma2_y_31)
+\end{Sinput}
+\end{Schunk}
+
+            The manually calculated quantities agree with those obtained from
+            the subsetted survey design.
+
+\begin{Schunk}
+\begin{Sinput}
+> identical(as.numeric(coef(m_y_31)), mean_y_31)
+\end{Sinput}
+\begin{Soutput}
+[1] TRUE
+\end{Soutput}
+\begin{Sinput}
+> all.equal(as.numeric(SE(m_y_31)), se_mean_y_31)
+\end{Sinput}
+\begin{Soutput}
+[1] TRUE
+\end{Soutput}
+\end{Schunk}
+        \end{Remark}
+\end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Now assume that the domain size $N_{31} = 650$ is known, but that
+        this information was not used when the sample was drawn. Estimate the
+        population domain total of environmental expenditures $t_{y,31}$ and
+        its standard error.
+
+    \begin{Solution}
+        The sampling design remains an \SRS from the full population. Hence,
+        $n_{31}$ remains random. Following the classical definition of the
+        hypergeometric distribution,\footnote{See e.g., Johnson, N. L, Kemp, A.
+            W., and Kotz, S. (2005). Univariate Discrete Distributions,
+            3$^{\mathrm{rd}}$ ed., Hoboken (NJ): John Wiley \& Sons, p. 251.}
+        consider a population of $N$ units, of which $N_{31}$ belong to domain
+        $U_{31}$ and $N-N_{31}$ do not. If an \SRS of $n$ units is drawn without
+        replacement, then the number $n_{31}$ of sampled domain units follows a
+        hypergeometric distribution:
+        \begin{equation}\label{eq:hyper}
+            n_{31} \sim \operatorname{Hypergeometric}(N, N_{31}, n).
+        \end{equation}
+
+        The known domain size $N_{31}=650$ is used only at the estimation
+        stage. The domain total is estimated by
+        \begin{equation*}
+            \widehat{t}_{y,31} = N_{31} \cdot \bar{y}_{31},
+        \end{equation*}
+        with estimated standard error
+        \begin{equation*}
+            \widehat{\se}(\,\widehat{t}_{y,31}) = N_{31} \cdot
+                \widehat{\se}(\bar{y}_{31}).
+        \end{equation*}
+        The variance estimator for $\bar{y}_{31}$, and hence
+        $\widehat{\se}(\bar{y}_{31})$, is the linearization variance estimator
+        under \SRS introduced in part a).
+
+        \textbf{Calculation with the \code{survey} package:} We use the
+        subsetted survey design \code{dn_sepe_31} from part a). The estimated
+        domain mean $\bar{y}_{31}$ has already been calculated; it is
+        reproduced here for ease of reference:
+
+\begin{Schunk}
+\begin{Sinput}
+> m_y_31 <- svymean(~expend, dn_sepe_31)
+\end{Sinput}
+\end{Schunk}
+
+        The estimated domain total and its standard error are then
+
+\begin{Schunk}
+\begin{Sinput}
+> N31 <- 650
+> c(total = N31 * coef(m_y_31), SE = N31 * SE(m_y_31))
+\end{Sinput}
+\begin{Soutput}
+total.expend           SE 
+    73483508      4181303 
+\end{Soutput}
+\end{Schunk}
+
+        \begin{Remark}
+            If the domain size $N_{31}$ is known, then $n_{31}$ has a
+            hypergeometric distribution; see (\ref{eq:hyper}). In our
+            case, $n_{31}$ has expected value $\approx 137.9$ and
+            standard deviation $\approx 9.6$.
+            Thus, the observed value $n_{31}=138$ is close to its expected
+            value under the sampling design. For example, the central 80\%
+            range of the distribution can be obtained with:
+
+\begin{Schunk}
+\begin{Sinput}
+> qhyper(c(0.1, 0.9), N31, N - N31, n)
+\end{Sinput}
+\begin{Soutput}
+[1] 126 150
+\end{Soutput}
+\end{Schunk}
+
+            Note that R uses an equivalent but different parametrization from
+            that in (\ref{eq:hyper}).
+
+            Another remark is in order. The known domain size $N_{31}$ can also
+            be incorporated by calibration. We can define the domain indicator
+            as an auxiliary variable and calibrate the full design to the known
+            totals $N$ and $N_{31}$:
+
+\begin{Schunk}
+\begin{Sinput}
+> dn_sepe_cal <- calibrate(dn_sepe, ~I31,
+                           population = c(`(Intercept)` = N, I31 = N31))
+> svytotal(~expend, subset(dn_sepe_cal, I31 == 1))
+\end{Sinput}
+\begin{Soutput}
+          total      SE
+expend 73483508 4181303
+\end{Soutput}
+\end{Schunk}
+
+        We will study calibration in more detail later.
+        \end{Remark}
+    \end{Solution}
+\end{Subtask}
+\end{Problem}
