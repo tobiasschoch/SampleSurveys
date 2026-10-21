@@ -7,7 +7,7 @@
 % -----------------------------------------------------------------------------
 % this document
 \title{Introduction to Survey Sampling}
-\newcommand{\TITLE}{Stratified Simple Random Sampling}
+\newcommand{\TITLE}{Stratified simple random sampling}
 \newcommand{\NR}{4}
 \subtitle{Part \NR: \TITLE}
 \author[Tobias Schoch]{Tobias Schoch}
@@ -99,7 +99,7 @@
 \begin{frame}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
-        \item Stratification primarily serves \alert{two purposes}:
+        \item Stratification \alert{primarily} serves \alert{two purposes}:
             \vspace{0.25em}
             \begin{itemize}
             \setlength{\itemsep}{4pt}
@@ -124,17 +124,15 @@
         \item The \alert{population total} of the $y$-variable \alert{in
             stratum} $h$ is denoted by $\tyh$ ($h = 1, \ldots, H$). We write:
         \vspace{-0.5em}
-        \begin{align}
-            \Nh &= \text{size of stratum $h$,} \nonumber\\
-            N &= \sum_{h = 1}^H \Nh \; = \; \text{population size,}
-                \nonumber\\
+        \begin{align*}
+            \Nh &= \text{size of stratum $h$,} r\\
+            N &= \sum_{h = 1}^H \Nh \; = \; \text{population size,}\\
             \tyh &= \sum_{i \in U_h} y_{ih} \; = \;
-                \text{$y$-total in stratum $h$,} \nonumber\\
+                \text{$y$-total in stratum $h$,}\\
             \ty &= \sum_{h = 1}^H \tyh \; = \;
-                \text{$y$-total in the population.} \label{eq:strat_tot_pop}
-        \end{align}
-        \item The \alert{population total} in (\ref{eq:strat_tot_pop}) can
-            equivalently be written as
+                \text{$y$-total in the population.}
+        \end{align*}
+        \item The \alert{population total} in can equivalently be written as
             \vspace{-0.5em}
             \begin{equation*}
                 \ty = \sum_{h=1}^H \Nh \, \myh,
@@ -171,7 +169,7 @@
 % -----------------------------------------------------------------------------
 \begin{frame}
     \begin{itemize}
-    \setlength{\itemsep}{8pt}
+    \setlength{\itemsep}{12pt}
         \item The \alert{variance} of the $y$-variable in stratum $h$ is
             given by
             \begin{equation*}
@@ -237,7 +235,7 @@
             \item the \alert{variance} of an estimator can be
                 \alert{decomposed} (in short notation) as
                 \begin{equation*}
-                    \var = \sum_h \var_h
+                    \var = \sum_h \mathsf{var}_{p,h}
                 \end{equation*}
         \end{itemize}
     \end{itemize}
@@ -296,7 +294,7 @@
 % -----------------------------------------------------------------------------
 \begin{frame}
     \begin{itemize}
-    \setlength{\itemsep}{4pt}
+    \setlength{\itemsep}{12pt}
         \item The theoretical \alert{variance} of $\mystrat$ is
             \begin{equation}\label{eq:strat_var_mean}
                 \var\big(\mystrat\big) = \sum_{h = 1}^H W_h^2
@@ -324,7 +322,9 @@
                 \var\big(\,\tystrat\big) = N^2 \,\var\big(\mystrat\big).
             \end{equation*}
         \item An unbiased \alert{variance estimator} is
-            $N^2 \, \widehat{\var}\big(\mystrat\big)$.
+            \begin{equation*}
+                N^2 \; \varest\big(\mystrat\big).
+            \end{equation*}
     \end{itemize}
 \end{frame}
 
@@ -360,21 +360,22 @@
         \item For sufficiently large sample sizes, an approximate
             $100(1-\alpha)\%$ \alert{confidence interval} (CI) for $\myu$ is
             \begin{equation*}
-                \mystrat \; \pm \; z_{1-\alpha/2}\,
-                    \widehat{\se}(\mystrat),
+                \mystrat \; \pm \; z_{1-\alpha/2}\; \ses(\mystrat),
             \end{equation*}
             where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$ quantile of the
             $N(0,1)$ distribution.
-        \item As under \SRS, this confidence interval is based on a
-            \alert{normal approximation}.
-        \item There is no \emph{universal} minimum sample size for the normal
-            approximation to be accurate.
-        \item Its accuracy depends on the finite populations within the strata
-            and on the stratum sample sizes $n_h$, in particular when
-            distributions are skewed.
-        \item Since sampling within each stratum is \SRS, \alert{Cochran's
-            rule} from Chapter 3 can be used as a \alert{rough guide within
-            individual strata}.
+            \vspace{0.75em}
+            \begin{itemize}
+            \setlength{\itemsep}{10pt}
+                \item As under \SRS, this confidence interval is based on a
+                    \alert{normal approximation}.
+                \item Its accuracy depends on the finite populations within the
+                    strata and on the stratum sample sizes $n_h$, in particular
+                    when distributions are skewed.
+                \item Since sampling within each stratum is \SRS,
+                    \alert{Cochran's rule} from Chapter 3 can be used as a
+                    \alert{rough guide within individual strata}.
+            \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -402,7 +403,7 @@
             \begin{itemize}
             \setlength{\itemsep}{6pt}
                 \item \alert{Proportional} allocation
-                \item \alert{Neyman--Tschuprow optimal} allocation
+                \item \alert{Neyman--Tschuprow} (optimal) allocation
             \end{itemize}
     \end{itemize}
 \end{frame}
@@ -440,7 +441,7 @@
         \alert{strategy} $\big(p^{\,\mprop}, \mys^{\,\mstrat}\big)$ to
             \vspace{0.25em}
             \begin{equation*}
-                \var_{\mprop}\big(\mys^{\,\mstrat}\big) = (1 - f)\frac{1}{n}
+                \var^{\mprop}\big(\mys^{\,\mstrat}\big) = (1 - f)\frac{1}{n}
                     \sum_{h = 1}^H W_h \varyh.
             \end{equation*}
         \item We use the short notation $p^{\,\mprop}$ instead of
@@ -468,8 +469,9 @@
             \addlinespace
             \midrule
             $W_h = N_h/N \quad$ & 0.196 & 0.229 & 0.195 & 0.166 & 0.084 &
-                0.056 & 0.074\\
+                0.056 & 0.074\\[0.5em]
             $n_h = [n W_h]$ & 20 & 23 & 19 & 17 & 8 & 6 & 7\\
+            \addlinespace
             \bottomrule
         \end{tabular}
         \end{center}
@@ -503,7 +505,9 @@
             \noindent where $[\cdot]$ denotes the rounding function.
         \item The allocation is \alert{variance-optimal} because it minimizes
             the variance in (\ref{eq:strat_var_mean}) subject to the constraint
-            $\sum_{h = 1}^H n_h = n$.
+            \begin{equation*}
+                \sum_{h = 1}^H n_h = n.
+            \end{equation*}
         \item The sampling design is denoted by $p^{\mopt}$ for short
             (full notation: $p_{\,\mSTSI}^{\,\mopt}$).
     \end{itemize}
@@ -516,7 +520,7 @@
         \item The \alert{variance} of the estimator $\mys^{\,\mstrat}$ under
             the strategy $\big(p^{\mopt}, \mys^{\,\mstrat}\big)$ is
             \begin{equation*}
-                \var_{\mopt}\big(\mys^{\,\mstrat}\big) =
+                \var^{\mopt}\big(\mys^{\,\mstrat}\big) =
                     \frac{1}{n}\left(\sum_{h = 1}^H W_h \sigma_h\right)^2 -
                     \frac{1}{N}\sum_{h = 1}^H W_h \varyh.
             \end{equation*}
@@ -610,11 +614,14 @@
             \SRS.
         \item We speak of an efficiency gain when an estimator has a
             \alert{smaller variance than the reference estimator}.
-        \item All sampling designs considered have the same sample size $n$.
-        \item The reference estimator is $\mys_{\,\mSRS} := \mys$,
-            corresponding to the strategy $(p_{\,\mSRS}, \, \mys_{\,\mSRS})$.
-        \item The corresponding estimator variances are denoted by
-            $\var_{\mSRS}$, $\var_{\mprop}$, and $\var_{\mopt}$.
+        \item All sampling designs considered have the \alert{same sample size}
+            $n$.
+        \item The \alert{reference estimator} is $\mys_{\,\mSRS} := \mys$,
+            corresponding to the strategy $(p_{\,\mSRS}, \, \mys_{\,\mSRS})$ with variance
+            $\var^{\mSRS}$.
+        \item As before, $\var^{\mprop}$ and $\var^{\mopt}$ denote the
+            variances under $\mSTSI$ with proportional and optimal allocation,
+            respectively.
     \end{itemize}
 \end{frame}
 
@@ -624,21 +631,23 @@
     \vspace{-0.5em}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
-        \item The \alert{efficiency gain} of the strategy $(p^{\,\mprop},\,
-            \mys^{\,\mstrat})$ over $(p_{\mSRS},\,\mys_{\,\mSRS})$ can be
-            expressed as the \alert{difference in variances},
-            \begin{equation}\label{eq:strat_eff_prop_es}
-                \var_{\mSRS} - \var_{\mprop} = \frac{1 - f}{n(N - 1)}\left\{\SSB
+        \item The \alert{efficiency gain} of the strategy
+            $(p^{\,\mprop},\, \mys^{\,\mstrat})$ over
+            $(p_{\mSRS},\,\mys_{\,\mSRS})$ can be
+            expressed as the \alert{difference in variances} (in shorthand
+            notation),
+            \begin{equation*}
+                \var^{\mSRS} - \var^{\mprop} = \frac{1 - f}{n(N - 1)}\left\{\SSB
                     - \sum_{h = 1}^H (1 - W_h)\varyh \right\}.
-            \end{equation}
-        \item Equation (\ref{eq:strat_eff_prop_es}) shows that
-            $(p^{\,\mprop},\, \mys^{\,\mstrat})$ is \alert{more efficient}
-            than $(p_{\,\mSRS}, \, \mys_{\,\mSRS})$ only if
-            \begin{equation}\label{eq:strat_ssb_condition}
-                \sum_{h = 1}^H (1 - W_h) \varyh < \SSB.
-            \end{equation}
+            \end{equation*}
         \begin{itemize}
-        \setlength{\itemsep}{4pt}
+        \setlength{\itemsep}{8pt}
+            \item[\goto] The strategy $(p^{\,\mprop},\,
+                \mys^{\,\mstrat})$ is \alert{more efficient} than
+                $(p_{\,\mSRS}, \, \mys_{\,\mSRS})$ if
+                \begin{equation*}
+                    \sum_{h = 1}^H (1 - W_h) \varyh < \SSB.
+                \end{equation*}
             \item[\goto] Thus, proportional stratification is more efficient
                 than \SRS when \alert{between-} \alert{stratum variation} is
                 sufficiently large relative to \alert{within-stratum
@@ -670,7 +679,7 @@
             \mys^{\,\mstrat})$ over $(p^{\,\mprop},\, \mys^{\,\mstrat})$
             can be expressed as the following difference in variances:
             \begin{equation*}
-                \var_{\mprop} - \var_{\mopt} = \frac{1}{n} \sum_{h = 1}^H W_h
+                \var^{\mprop} - \var^{\mopt} = \frac{1}{n} \sum_{h = 1}^H W_h
                 \big(\sigma_h - \widebar{\sigma}\big)^2,
             \end{equation*}
         \noindent where $\widebar{\sigma} = \sum_{h=1}^H W_h \sigma_h$ is the

@@ -14,7 +14,7 @@ options(SweaveHooks = list(fig = function() par(mar = c(5, 4, 4, 2))))
     fictitious (sub-) population of firms:
 
 <<eval=FALSE>>=
-sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+sepe <- read.table("https://stat.ethz.ch/Teaching/Datasets/cas-das/sepe.dat",
                     header = TRUE)
 @
 

@@ -1,0 +1,44 @@
+\documentclass{my_eth_beamer}
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, positioning}
+
+% -----------------------------------------------------------------------------
+% this document
+\title{Introduction to Survey Sampling}
+\subtitle{Chapter 8: Calibration}
+\author[Tobias Schoch]{Tobias Schoch}
+\date{2026}
+
+% -----------------------------------------------------------------------------
+\begin{document}
+
+{
+\setbeamertemplate{footline}{}
+\setbeamertemplate{logo}{}
+\begin{frame}
+    \pgfputat{\pgfxy(-0.2,-10)}{\pgfbox[left,base]{%
+        \includegraphics[width=14.4cm]{title.png}}}
+    %
+     \pgfputat{\pgfxy(2.25,-0.2)}{\pgfbox[right,base]{%
+         \includegraphics[height=0.4cm]{logo.png}}}
+    %
+    \begin{tikzpicture}[remember picture,overlay]
+        \draw [magenta,fill] (6.7,-3.5) rectangle ++(8.3,-4.0);
+    \end{tikzpicture}
+    %
+    \begin{textblock}{10}(8.1,10.3)
+        \Large\bfseries\color{white}\inserttitle\\
+    \end{textblock}
+    %
+    \begin{textblock}{10}(8.1,12.0)
+        \normalsize\bfseries\color{white}\insertsubtitle\\
+    \end{textblock}
+    %
+    \begin{textblock}{10}(8.1,15.6)
+        \scriptsize\color{white}\insertauthor, \insertdate
+    \end{textblock}
+\end{frame}
+}
+\addtocounter{framenumber}{-1}
+
+\end{document}

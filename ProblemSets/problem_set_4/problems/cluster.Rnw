@@ -1,0 +1,137 @@
+%\SweaveUTF8
+
+<<setRopts, echo=FALSE>>=
+options(width = 80, prompt = "> ", continue = " ")
+options(SweaveHooks = list(fig = function() par(mar = c(5, 4, 4, 2))))
+@
+\SweaveOpts{engine = R, keep.source = TRUE, strip.white = true}
+\SweaveOpts{eps = FALSE, pdf = TRUE, width = 9, height = 6}
+\SweaveOpts{prefix.string=fig}
+\setkeys{Gin}{width=\textwidth}
+
+\begin{Problem}[One-stage cluster sampling]
+    The California Academic Performance Index (API) was a measure of school
+    performance based on standardized tests. API scores ranged from 200 to
+    1,000, with higher values indicating better performance. The last API
+    report was produced in 2013.
+
+    \vspace{0.25em}
+
+    The API data are included in the \code{survey} package and can be loaded
+    with \code{data(api)}. We use the one-stage cluster sample
+    \code{apiclus1}. A simple random sample of $n = 15$ school districts was
+    drawn from $N = 757$ districts, and all schools in the selected districts
+    were observed.
+
+    \vspace{0.25em}
+
+    The survey design is specified as follows:
+
+\begin{Scode}
+dn_api <- svydesign(id = ~dnum, weights = ~pw, fpc = ~fpc, data = apiclus1)
+\end{Scode}
+
+    Here, \code{dnum} identifies the school district, \code{pw} contains the
+    design weights, and \code{fpc} contains the finite-population correction
+    for sampling districts. We focus on \code{api00}, the API score in 2000.
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item Estimate the population mean API score in 2000. Also compute the
+        design effect by calling \code{svymean()} with \code{deff = TRUE}.
+
+    \begin{Solution}
+        Load the data and define the survey design:
+
+<<>>=
+library("survey")
+data(api)
+dn_api <- svydesign(id = ~dnum, weights = ~pw, fpc = ~fpc, data = apiclus1)
+@
+
+        The estimated mean and its design effect are:
+
+<<>>=
+mean_api <- svymean(~api00, dn_api, deff = TRUE)
+mean_api
+@
+
+<<echo = FALSE>>=
+de <- deff(mean_api)[1]
+m <- nrow(apiclus1)
+m_eff <- m / de
+@
+
+        The design effect is about \Sexpr{round(de, 1)}. Thus, the
+        \Sexpr{m} sampled schools contain roughly as much information about
+        the population mean as an SRS of
+        \Sexpr{round(m_eff)} schools. The loss of efficiency is caused mainly
+        by the similarity of schools within the same district.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Estimate the 25th percentile, median, and 75th percentile of the API
+        score in 2000. Use
+
+\begin{Scode}
+svyquantile(x, design, quantiles, ...)
+\end{Scode}
+
+    \begin{Solution}
+        We estimate all three quartiles at once:
+
+<<>>=
+q_api <- svyquantile(~api00, dn_api, quantiles = c(0.25, 0.5, 0.75))
+q_api
+@
+
+<<echo = FALSE>>=
+med <- svyquantile(~api00, dn_api, quantiles = 0.5)
+med_est <- unname(coef(med))
+med_ci <- confint(med)
+@
+
+        The estimated median is \Sexpr{med_est}. Its 95\,\% confidence interval
+        is \Sexpr{med_ci[1, 1]} to \Sexpr{med_ci[1, 2]}.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item The California State Board of Education used an API score of 800 as
+        a performance target. Estimate the proportion of schools with an API
+        score below 800. Use
+
+\begin{Scode}
+svycdf(formula, design, ...)
+\end{Scode}
+
+    \begin{Solution}
+        \code{svycdf()} estimates the population cumulative distribution
+        function:
+
+<<>>=
+F_hat <- svycdf(~api00, dn_api)
+@
+
+        Since API scores are integer-valued, the proportion below 800 is
+        $\widehat F(799)$:
+
+<<>>=
+p_below <- F_hat[[1]](799)
+p_below
+@
+
+        Thus, about \Sexpr{round(100 * p_below)}\,\% of schools have an API
+        score below the target.
+
+<<cdf, fig = TRUE, include=FALSE>>=
+plot(F_hat[[1]])
+abline(v = 800, lwd = 2)
+@
+
+        \begin{figure}[tbp]
+            \centering
+            \includegraphics{problems/fig-cdf}
+        \end{figure}
+    \end{Solution}
+\end{Subtask}
+\end{Problem}

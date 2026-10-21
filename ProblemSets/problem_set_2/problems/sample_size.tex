@@ -12,7 +12,7 @@ We use the data set \code{sepe.dat} from Problem Set 1.
     %---------------------------------------------------------------------------
     \item We plan a new sample survey to estimate total environmental
         protection expenditures. The survey will use simple random sampling
-        (SRS), and the total will be estimated by $\tys = N\mys$, where $\mys$
+        (\SRS), and the total will be estimated by $\tys = N\mys$, where $\mys$
         is the sample mean.
 
         For sample size planning, assume that future expenditures have
@@ -41,10 +41,10 @@ We use the data set \code{sepe.dat} from Problem Set 1.
         \begin{equation*}
             n_0 = \left(\frac{z_{1 - \alpha/2} \cdot
             \sigmay}{\rho\,\myu}\right)^2 = \left(\frac{z_{1 -
-            \alpha/2}\cdot\varcoef_y}{\rho}\right)^2,
+            \alpha/2}\cdot\mathrm{CV}_y}{\rho}\right)^2,
         \end{equation*}
         where $\sigmay$ is the finite-population standard deviation and
-        $\varcoef_y = \sigmay/\myu$ is the finite-population coefficient of
+        $\mathrm{CV}_ = \sigmay/\myu$ is the finite-population coefficient of
         variation. Accounting for the finite-population correction gives
         \begin{equation*}
             n = \frac{n_0}{1 + n_0/N}.
@@ -55,7 +55,7 @@ We use the data set \code{sepe.dat} from Problem Set 1.
 
 \begin{Schunk}
 \begin{Sinput}
-> sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+> sepe <- read.table("https://stat.ethz.ch/Teaching/Datasets/cas-das/sepe.dat",
                      header = TRUE)
 > attach(sepe)
 \end{Sinput}
@@ -187,14 +187,14 @@ skewness_pop <- function(x)
         is at most 5\,\%, where $\tys = N \mys$.
 
     \begin{Solution}
-        Under SRS,
+        Under \SRS,
         \begin{equation*}
             \var(\,\tys) = N^2\left(1-\frac{n}{N}\right)\frac{\varyu}{n},
             \qquad \EE(\,\tys)=\ty=N\myu.
         \end{equation*}
         Hence,
         \begin{equation*}
-            \varcoef(\,\tys) = \varcoef_y \sqrt{\frac{1-n/N}{n}}.
+            \varcoef(\,\tys) = \mathrm{CV}_y \sqrt{\frac{1-n/N}{n}}.
         \end{equation*}
 
         We require
@@ -203,11 +203,11 @@ skewness_pop <- function(x)
         \end{equation*}
         Ignoring the finite-population correction first gives
         \begin{equation*}
-            \frac{\varcoef_y}{\sqrt{n}} \leq 0.05,
+            \frac{\mathrm{CV}_y}{\sqrt{n}} \leq 0.05,
         \end{equation*}
         or equivalently,
         \begin{equation*}
-            n \geq n_0 = \left(\frac{\varcoef_y}{0.05}\right)^2.
+            n \geq n_0 = \left(\frac{\mathrm{CV}_y}{0.05}\right)^2.
         \end{equation*}
 
         Accounting for the finite-population correction gives
@@ -260,7 +260,7 @@ skewness_pop <- function(x)
 
     \begin{Solution}
         From Problem 1.2c), $\props_{31} = 0.1725$. Let $\indicator_{31}$
-        denote the indicator variable defined above. Under SRS,
+        denote the indicator variable defined above. Under \SRS,
         \begin{equation*}
             \se(\,\props_{31}) =
             \sqrt{\left(1 - \frac{n}{N}\right)\frac{\varu_{\indicator_{31}}}{n}},

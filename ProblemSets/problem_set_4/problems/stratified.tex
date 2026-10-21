@@ -1,0 +1,323 @@
+%\SweaveUTF8
+
+
+
+\setkeys{Gin}{width = \textwidth}
+
+\begin{Problem}[Stratified simple random sampling]
+    We again use the data set \code{env.dat}. Assume that membership in
+    industry class 31 was known from the sampling frame and that the population
+    was stratified by this variable before sampling. Within each stratum, a
+    simple random sample without replacement was drawn.
+    The population consists of two strata:
+
+    \vspace{0.5em}
+    \begin{center}
+        \begin{tabular}{ll}
+            \toprule
+            \addlinespace
+            Stratum & Population size\\
+            \addlinespace
+            \midrule
+            \addlinespace
+            $U_{31}$ (\code{code == 1}) & $N_{31} = 460$\\
+            \addlinespace
+            $U_{\mathrm{rest}}$ (\code{code == 0}) &
+                $N_{\mathrm{rest}} = 3{,}310$\\
+            \bottomrule
+        \end{tabular}
+    \end{center}
+
+    \vspace{0.5em}
+
+    \begin{Rhint}
+        The stratum sample sizes are available in \code{sepe.dat}. As explained
+        in Problem Set 2, create a survey design object for stratified sampling
+        and name it \code{dn_sepe}.
+    \end{Rhint}
+
+\begin{Subtask}
+    %---------------------------------------------------------------------------
+    \item Estimate the population total of environmental-protection
+        expenditures using \code{svytotal()}. Also report a 90\,\% confidence
+        interval using
+
+\begin{Scode}
+confint(object, parm, level = 0.95, ...)
+\end{Scode}
+
+    \begin{Solution}
+        Load the data and define the survey design:
+
+
+\begin{Schunk}
+\begin{Sinput}
+> library("survey")
+> sepe <- read.table("https://stat.ethz.ch/Teaching/Datasets/cas-das/sepe.dat",
+                     header = TRUE)
+\end{Sinput}
+\end{Schunk}
+
+\begin{Schunk}
+\begin{Sinput}
+> sepe$Nph <- ifelse(sepe$code == 1, 460, 3310)
+> dn_sepe <- svydesign(ids = ~1, strata = ~code, fpc = ~Nph, data = sepe)
+\end{Sinput}
+\end{Schunk}
+
+        The estimated total and its 90\,\% confidence interval are
+
+\begin{Schunk}
+\begin{Sinput}
+> t_y <- svytotal(~expend, dn_sepe)
+> t_y
+\end{Sinput}
+\begin{Soutput}
+           total      SE
+expend 317824493 7719366
+\end{Soutput}
+\begin{Sinput}
+> confint(t_y, level = 0.90)
+\end{Sinput}
+\begin{Soutput}
+             5 %      95 %
+expend 305127266 330521720
+\end{Soutput}
+\end{Schunk}
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Estimate the mean environmental-protection expenditures in each
+        stratum using \code{svyby()}.
+
+        \begin{Rhint}
+            The function \code{svyby(formula, by, design, FUN, ...)} applies
+            the survey statistic \code{FUN} to the variables specified by
+            \code{formula}, separately for the groups defined by \code{by},
+            using the survey design \code{design}. Additional arguments
+            can be passed through \code{...}.
+        \end{Rhint}
+
+        Next, test whether the two stratum means are equal. For comparison,
+        use both
+
+\begin{Scode}
+t.test(expend ~ code, data = sepe, var.equal = TRUE)
+\end{Scode}
+
+        and the design-based test
+
+\begin{Scode}
+svyttest(expend ~ code, dn_sepe)
+\end{Scode}
+
+        The first is the classical pooled two-sample $t$-test and ignores the
+        sampling design. The second uses the variance implied by the survey
+        design, including the finite population corrections.
+
+    \begin{Solution}
+        The estimated stratum means are
+
+\begin{Schunk}
+\begin{Sinput}
+> svyby(~expend, ~code, dn_sepe, svymean)
+\end{Sinput}
+\begin{Soutput}
+  code    expend       se
+0    0  80308.39 2173.576
+1    1 113051.55 6082.014
+\end{Soutput}
+\end{Schunk}
+
+        The classical pooled two-sample $t$-test is
+
+\begin{Schunk}
+\begin{Sinput}
+> t.test(expend ~ code, data = sepe, var.equal = TRUE)
+\end{Sinput}
+\begin{Soutput}
+	Two Sample t-test
+
+data:  expend by code
+t = -5.2217, df = 798, p-value = 2.264e-07
+alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+95 percent confidence interval:
+ -45052.07 -20434.25
+sample estimates:
+mean in group 0 mean in group 1 
+       80308.39       113051.55 
+\end{Soutput}
+\end{Schunk}
+
+        The corresponding design-based test is
+
+\begin{Schunk}
+\begin{Sinput}
+> svyttest(expend ~ code, dn_sepe)
+\end{Sinput}
+\begin{Soutput}
+	Design-based t-test
+
+data:  expend ~ code
+t = 5.0696, df = 797, p-value = 4.96e-07
+alternative hypothesis: true difference in mean is not equal to 0
+95 percent confidence interval:
+ 20065.01 45421.31
+sample estimates:
+difference in mean 
+          32743.16 
+\end{Soutput}
+\end{Schunk}
+
+        The two tests need not give the same standard error or $p$-value.
+        \code{t.test()} treats the observations as independent samples from
+        two populations and pools their variances, whereas \code{svyttest()}
+        uses a design-based variance estimate from \code{dn_sepe}.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Let $y_i$ denote environmental-protection expenditures
+        (\code{expend}) and $x_i$ the number of full-time employees
+        (\code{empl}). Two different summaries are commonly considered:
+        \begin{equation*}
+            r_{AR}
+            = \frac{1}{N_+}\sum_{i \in U_+}\frac{y_i}{x_i},
+            \qquad
+            r_{RA}
+            = \frac{\sum_{i \in U} y_i}{\sum_{i \in U} x_i},
+        \end{equation*}
+        where $U_+ = \{i \in U:x_i>0\}$ and $N_+ = |U_+|$. The first is the
+        average of ratios; the second is the ratio of totals
+        (equivalently, the ratio of averages).
+
+        Estimate $r_{RA}$ using \code{svyratio()} and the design object
+        \code{dn_sepe}. Then repeat the calculation with
+        \code{separate = TRUE}. What changes?
+
+        \begin{Rhint}
+            Use
+
+\begin{Scode}
+svyratio(numerator = formula, denominator, design, ...)
+\end{Scode}
+
+            The default estimates one combined ratio. With \code{separate =
+            TRUE}, ratios are estimated separately within the strata.
+        \end{Rhint}
+
+    \begin{Solution}
+        The combined ratio estimator is
+        \begin{equation*}
+            \widehat r_{RA}
+            = \frac{\widehat t_y}{\widehat t_x}.
+        \end{equation*}
+
+\begin{Schunk}
+\begin{Sinput}
+> r_RA <- svyratio(~expend, ~empl, dn_sepe)
+> r_RA
+\end{Sinput}
+\begin{Soutput}
+Ratio estimator: svyratio.survey.design2(~expend, ~empl, dn_sepe)
+Ratios=
+           empl
+expend 450.1731
+SEs=
+           empl
+expend 10.85506
+\end{Soutput}
+\end{Schunk}
+
+        Thus, the estimated ratio is
+        450.2, with estimated standard error
+        10.9.
+        With \code{separate = TRUE}, \code{svyratio()} instead reports one
+        ratio for each stratum:
+
+\begin{Schunk}
+\begin{Sinput}
+> r_RA_sep <- svyratio(~expend, ~empl, dn_sepe, separate = TRUE)
+> r_RA_sep
+\end{Sinput}
+\begin{Soutput}
+Stratified ratio estimate: svyratio.survey.design2(~expend, ~empl, dn_sepe, separate = TRUE)
+Ratio estimator: Stratum == 0L
+Ratios=
+           empl
+expend 461.3302
+SEs=
+           empl
+expend 12.77544
+Ratio estimator: Stratum == 1L
+Ratios=
+           empl
+expend 400.6449
+SEs=
+           empl
+expend 18.37954
+\end{Soutput}
+\end{Schunk}
+
+        Hence, \code{separate = TRUE} does not produce a second single
+        estimate of the overall ratio; it produces the within-stratum ratios
+        $\widehat t_{yh}/\widehat t_{xh}$.
+    \end{Solution}
+
+    %---------------------------------------------------------------------------
+    \item Convert \code{dn_sepe} to a replicate-weight design for the
+        Rao--Wu $(n-1)$ bootstrap with $B = 200$ replicates:
+
+\begin{Scode}
+set.seed(11)
+dn_sepe_boot <- as.svrepdesign(dn_sepe, type = "subbootstrap",
+                               replicates = 200)
+\end{Scode}
+
+        Re-estimate the combined ratio $r_{RA}$ from part c) using this
+        replicate design. Also report its 95\,\% confidence interval.
+
+    \begin{Solution}
+        Create the replicate-weight design:
+
+\begin{Schunk}
+\begin{Sinput}
+> set.seed(11)
+> dn_sepe_boot <- as.svrepdesign(dn_sepe, type = "subbootstrap",
+                                replicates = 200)
+\end{Sinput}
+\end{Schunk}
+
+        Estimate the ratio:
+
+\begin{Schunk}
+\begin{Sinput}
+> r_RA_boot <- svyratio(~expend, ~empl, dn_sepe_boot)
+> r_RA_boot
+\end{Sinput}
+\begin{Soutput}
+Ratio estimator: svyratio.svyrep.design(~expend, ~empl, dn_sepe_boot)
+Ratios=
+           empl
+expend 450.1731
+SEs=
+         [,1]
+[1,] 12.14926
+\end{Soutput}
+\end{Schunk}
+
+        The point estimate is the same ratio estimator as before, while its
+        standard error is now estimated from the bootstrap replicate weights.
+        The 95\,\% confidence interval is
+
+\begin{Schunk}
+\begin{Sinput}
+> confint(r_RA_boot)
+\end{Sinput}
+\begin{Soutput}
+              2.5 %   97.5 %
+expend/empl 426.361 473.9853
+\end{Soutput}
+\end{Schunk}
+    \end{Solution}
+\end{Subtask}
+\end{Problem}

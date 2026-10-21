@@ -7,7 +7,7 @@
 % -----------------------------------------------------------------------------
 % this document
 \title{Introduction to Survey Sampling}
-\newcommand{\TITLE}{Simple Random Sampling}
+\newcommand{\TITLE}{Simple random sampling}
 \newcommand{\NR}{3}
 \subtitle{Part \NR: \TITLE}
 \author[Tobias Schoch]{Tobias Schoch}
@@ -33,6 +33,7 @@
         \item Statistical inference
         \item Sample size determination
         \item Estimation for subpopulations -- Unplanned domains
+        \item Supplements
     \end{enumerate}
 \end{frame}
 
@@ -96,9 +97,10 @@
     \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
-        \item Let $s$ be an \SRS of size $n$ from $U$. The variable of
-            interest is denoted by $y_i$.
-        \item An \emph{unbiased} estimator of the \alert{population mean}
+        \item Let $s$ be an \SRS of size $n$ from $U$. Let $y$ denote the
+            variable of interest, with value $y_i$ for population element $i
+            \in U$.
+        \item An \alert{unbiased} estimator of the \alert{population mean}
             $\myu$ is
     \end{itemize}
     \vspace{0.5em}
@@ -125,12 +127,12 @@
         Under the sampling design, $\indicator\{i \in s\}$ is a Bernoulli
         random variable. Under $p_{\mSRS}$, its expected value is
         \begin{equation*}
-            \EE_p\big(\indicator\{i \in s\}\big) = \pi_i = \frac{n}{N}
+            \EE\big(\indicator\{i \in s\}\big) = \pi_i = \frac{n}{N}
         \end{equation*}
         for every $i \in U$. Hence,
         \begin{equation*}
-            \EE_p(\mys) = \frac{1}{n} \sum_{i \in U}
-                \EE_p\big(\indicator\{i \in s\}\big) \, y_i =
+            \EE(\mys) = \frac{1}{n} \sum_{i \in U}
+                \EE\big(\indicator\{i \in s\}\big) \, y_i =
                     \frac{1}{n} \sum_{i \in U} \pi_i \, y_i =
                     \frac{1}{n} \sum_{i \in U} \frac{n}{N} \, y_i = \myu,
         \end{equation*}
@@ -142,9 +144,7 @@
 \begin{frame}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
-        \item The \alert{theoretical variance} of the estimator $\mys$ ($\var$
-            or $\var_p$ if we want to highlight the dependence on the design
-            $p$) is
+        \item The \alert{theoretical variance} of the estimator $\mys$ is
             \begin{equation*}
                 \var(\mys) = \left(1 - \frac{n}{N}\right)\frac{\varyu}{n} =
                     (1 - f)\frac{\varyu}{n},
@@ -170,19 +170,19 @@
         \item An unbiased \alert{variance estimator} for $\mys$ that requires
             only the observed values $y_i$, $i \in s$, is
             \begin{equation*}
-                \widehat{\var}(\mys) = \left(1 - \frac{n}{N}\right)
+                \varest(\mys) = \left(1 - \frac{n}{N}\right)
                     \frac{\varys}{n},
             \end{equation*}
             \noindent where
             \begin{equation*}
                 \varys = \frac{1}{n - 1}\sum_{i \in s}(y_i - \mys)^2.
             \end{equation*}
-        \item The estimated \alert{standard error} $\widehat{\se}(\mys)$ is
-            defined as the square root of $\widehat{\var}(\mys)$.
+        \item The estimated \alert{standard error} $\ses(\mys)$ is
+            defined as the square root of $\varest(\mys)$.
         \item The estimated \alert{coefficient of variation} is, for
             $\mys > 0$,
             \begin{equation*}
-                \widehat{\varcoef}(\mys) = \frac{\widehat{\se}(\mys)}{\mys}.
+                \varcoefs(\mys) = \frac{\ses(\mys)}{\mys}.
             \end{equation*}
     \end{itemize}
 \end{frame}
@@ -224,14 +224,13 @@
         \item Recall the \alert{central limit theorem} from Chapter 2.
             Under suitable regularity conditions,
             \begin{equation*}
-                \frac{\mys - \myu}{\widehat{\se}(\mys)}
+                \frac{\mys - \myu}{\ses(\mys)}
             \end{equation*}
             is approximately $N(0,1)$-distributed for sufficiently large $n$.
         \item Thus, for sufficiently large $n$, an approximate
             $100(1 - \alpha)\%$ \alert{confidence interval} (CI) for $\myu$ is
             \begin{equation}\label{eq:srs_ci}
-                \mys \; \pm \; z_{1-\alpha/2}\,
-                    \widehat{\se}(\mys),
+                \mys \; \pm \; z_{1-\alpha/2}\; \ses(\mys),
             \end{equation}
             where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$ quantile of the
             $N(0,1)$ distribution.
@@ -252,15 +251,15 @@
                     finite population, in particular on skewness and extreme
                     values.
                 \item Because such features are \emph{common} in survey
-                    applications, simple rules such as $n \geq 30$'' or $n \geq
-                    50$'' should be used with caution.
+                    applications, simple rules such as ``$n \geq 30$'' or
+                    ``$n \geq 50$'' should be used with caution.
             \end{itemize}
         \item A \alert{practical question} is therefore how large $n$ should be
             for the normal approximation to be sufficiently accurate.
         \item For populations with marked \alert{positive skewness},
             \citet[][p.~42]{cochran_1977} proposed the \alert{crude rule}
             \begin{equation*}
-                n > 25,G_1^2,
+                n > 25\,G_1^2,
             \end{equation*}
             where $G_1$ denotes the population skewness.
     \end{itemize}
@@ -317,6 +316,7 @@
         \item One of the first questions in survey planning is:
             \alert{How large should the sample be?}
         \item The answer depends mainly on three \alert{factors}:
+            \vspace{0.25em}
             \begin{itemize}
             \setlength{\itemsep}{6pt}
                 \item the total survey budget;
@@ -349,7 +349,7 @@
             \noindent where the probability $\alpha$ (e.g., 5\%) and
             $\epsilon > 0$ are specified in advance.
         \item By the \alert{central limit theorem} (see Theorem 1 in Chapter
-            2), $(\mys - \myu) \, / \, \widehat{\se}(\mys)$ has an
+            2), $(\mys - \myu) \, / \, \ses(\mys)$ has an
             approximately $N(0,1)$ distribution for a sufficiently large
             sample size.
     \end{itemize}
@@ -374,7 +374,7 @@
             $\epsilon$:
                 \begin{equation*}
                     \mys \, \pm \, \underbrace{z_{1 - \alpha / 2} \;
-                        \widehat{\se}(\mys)}_{=\epsilon}.
+                        \ses(\mys)}_{=\epsilon}.
                 \end{equation*}
         \item In practice, $n_0$ is \alert{rounded up} to the next integer.
     \end{itemize}
@@ -388,9 +388,9 @@
         \item The estimate in (\ref{eq:srs_n}) is suitable when the resulting
             sampling fraction $n_0/N$ is negligible (e.g., $n_0/N < 0.01$).
             Otherwise, we use the \alert{refined estimate}
-            \begin{equation}\label{eq:srs_n_update}
+            \begin{equation*}
                 n = \frac{n_0}{1 + n_0 / N},
-            \end{equation}
+            \end{equation*}
 
             \vspace{0.5em}
 
@@ -502,6 +502,7 @@
                 \item its population size $N_d$ is \alert{unknown}
                     ($P_d = N_d/N$ is unknown).
             \end{itemize}
+        \vspace{0.25em}
         \item We want to estimate the \alert{mean} $\widebar{y}_{U_d}$ in the
             \alert{subpopulation} $U_d$.
         \item First, note that $\widebar{y}_{U_d}$ can be written as
@@ -545,7 +546,7 @@
             \end{equation*}
         \item Since $\indicator_{id}^s$ is a function of the random sample
             $s$, $n_d$ is a \alert{random variable} with expected value
-            $nP_d$ (hypergeometric distribution).
+            $n\,P_d$ (hypergeometric distribution).
     \end{itemize}
 \end{frame}
 
@@ -568,12 +569,13 @@
                 \frac{\sum_{i \in s_d} y_i}{n_d},
                 \qquad n_d > 0.
             \end{equation*}
-        \item This estimator is a \alert{ratio} of two estimated totals; see
-            Chapter 7.
         \item Although this estimator has the form of a ratio of two estimated
             totals, it has a useful special property under \SRS.
-        \item \alert{Conditional} on $n_d = m > 0$, the domain sample $s_d$ is
-            an \alert{\SRS of size $m$ from $U_d$}.
+            \vspace{0.25em}
+            \begin{itemize}
+                \item[\goto] \alert{Conditional} on $n_d = m > 0$, the domain
+                    sample $s_d$ is an \alert{\SRS of size $m$ from $U_d$}.
+            \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -583,7 +585,7 @@
     \setlength{\itemsep}{12pt}
         \item Hence,
             \begin{equation*}
-                \EE_p\big(\widebar{y}_d \mid n_d = m\big) =
+                \EE\big(\widebar{y}_d \mid n_d = m\big) =
                     \widebar{y}_{U_d}.
             \end{equation*}
         \item Thus, $\widebar{y}_d$ is unbiased for the domain mean,
@@ -604,21 +606,31 @@
     \end{itemize}
 \end{frame}
 
+
+\subsection{Supplements}\label{sec:supplements}
+
 % -----------------------------------------------------------------------------
 \begin{frame}
-    \frametitle{\normalsize Appendix: Determining the required sample size
-    (derivation)}
-     \begin{itemize}
-     \setlength{\itemsep}{6pt}
+    \begin{center}
+        \Huge{\textbf{\NR.\insertsubsectionnumber.~Supplements}}
+    \end{center}
+\end{frame}
 
+\subsubsection{Supplement: Determining the required sample size (derivation)}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\NR.\insertsubsectionnumber A~\insertsubsubsection}
+     \begin{itemize}
+     \setlength{\itemsep}{3pt}
         \item Let $\props$ denote the estimator of the population proportion
             $\propu$ under the design $p_{\mSRS}$. Ignoring the finite
              population correction, its estimated standard error is
             \begin{equation*}
-                \widehat{\se}\big(\props,\big) =
+                \ses\big(\props,\big) =
                 \sqrt{\frac{\props(1-\props)}{n_0-1}}
                 \approx
-                \sqrt{\frac{\props(1-\props)}{n_0}}, \tag{C.1}
+                \sqrt{\frac{\props(1-\props)}{n_0}}, \tag{A.1}
             \end{equation*}
             where the approximation is appropriate when $n_0$ is sufficiently
              large.
@@ -627,7 +639,7 @@
             \alert{Choose the sample size such that}
             \begin{equation*}
                 \PP\big(\vert \props - \propu \, \vert > \epsilon \big) \leq
-                \alpha, \tag{C.2}
+                \alpha, \tag{A.2}
             \end{equation*}
 
             \vspace{-0.25em}
@@ -641,7 +653,7 @@
 \begin{frame}
     \begin{itemize}
     \setlength{\itemsep}{10pt}
-        \item The requirement in (C.2) is \alert{equivalent} to
+        \item The requirement in (A.2) is \alert{equivalent} to
             \begin{equation*}
                 \PP\bigl(\lvert\props-\propu\rvert\leq\epsilon\bigr)
                 \geq 1-\alpha.
@@ -650,15 +662,15 @@
             theorem} gives
             \begin{equation*}
                 Z = \frac{\props-\propu}
-                {\widehat{\se}(\props)}
+                {\ses(\props)}
                 \approx N(0,1).
             \end{equation*}
         \item Hence, using the \alert{symmetry} of the standard normal
             distribution,
             \begin{equation*}
-                \frac{\epsilon}{\widehat{\se}(\props)}
+                \frac{\epsilon}{\ses(\props)}
                 \geq z_{1-\alpha/2},
-                \tag{C.3}
+                \tag{A.3}
             \end{equation*}
             where $z_{1-\alpha/2}$ is the $(1-\alpha/2)$ quantile of the $N(0,1)$
             distribution.
@@ -669,20 +681,20 @@
 \begin{frame}
     \begin{itemize}
     \setlength{\itemsep}{0pt}
-        \item Substituting the approximation from (C.1) into (C.3) gives the
+        \item Substituting the approximation from (A.1) into (A.3) gives the
             initial sample size
             \begin{equation*}
                 n_0 =
-                \frac{P_0(1-P_0)\,z_{1-\alpha/2}^2}{\epsilon^2}, \tag{C.4}
+                \frac{P_0(1-P_0)\,z_{1-\alpha/2}^2}{\epsilon^2}, \tag{A.4}
             \end{equation*}
             where $P_0$ is an \alert{anticipated value} of the population
             proportion. If the sampling fraction $n_0/N$ is not negligible, the
             \alert{finite population correction} gives
             \begin{equation*}
                 n =
-                \frac{n_0}{1+(n_0-1)/N}. \tag{C.5}
+                \frac{n_0}{1+(n_0-1)/N}. \tag{A.5}
             \end{equation*}
-        \item Substituting (C.4) into (C.5) gives
+        \item Substituting (A.4) into (A.5) gives
             \begin{equation*}
                 n \geq \frac{N P_0(1-P_0)z_{1-\alpha/2}^2}{
                     \epsilon^2(N-1) + P_0(1-P_0)z_{1-\alpha/2}^2}.

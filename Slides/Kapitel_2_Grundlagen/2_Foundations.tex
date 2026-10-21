@@ -43,14 +43,17 @@
     \begin{equation*}
         U = \{1, 2, \ldots, N\}.
     \end{equation*}
+    \vspace{-1.25em}
     \begin{itemize}
     \setlength{\itemsep}{4pt}
         \item The notation $U$ is derived from ``universe.''
         \item Each label $i$ ($i \in U$) can be assigned \alert{uniquely} to
             one unit.
     \end{itemize}
+    \vspace{0.5em}
     The elements $i \in U$ have attributes or characteristics that can be
     recorded by \alert{variables}.
+    \vspace{0.25em}
     \begin{itemize}
     \setlength{\itemsep}{4pt}
         \item Unless stated otherwise, we assume that all variables are
@@ -61,18 +64,19 @@
 
 % -----------------------------------------------------------------------------
 \begin{frame}
-    Let $y_i$ denote the variable of interest. The most important
-    (population) \alert{characteristics} are
+    Let $y$ denote the variable of interest, with value $y_i$ for population
+    element $i \in U$. The most important (population) \alert{characteristics}
+    are
+    \vspace{0.25em}
     \begin{align*}
-        \ty &= \sum_{i \in U} y_i & \text{(population total)} \\[1em]
+        \ty &= \sum_{i \in U} y_i & \text{(population total)} \\[1.25em]
         \myu &= \frac{1}{N} \sum_{i \in U} y_i = \frac{\ty}{N} &
-            \text{(population mean)}\\[1em]
+            \text{(population mean)}\\[1.25em]
         \sigma_y^2 &= \frac{1}{N - 1}\sum_{i \in U} (y_i - \myu)^2 &
             \text{(population variance).}
     \end{align*}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
-        \item Example: population total of all employees in retail trade
         \item Short notation: $t$ and $\sigma^2$
     \end{itemize}
 \end{frame}
@@ -217,7 +221,7 @@
         \vspace{-0.5em}
         Let $U$ be a population of size $N$. We want to select a (proper)
         sample $s$ of fixed size $n$ \alert{at random} from $U$
-        (without replacement).
+        (without replacement, $0 < n < N$).
         \begin{itemize}
         \setlength{\itemsep}{8pt}
             \item There are $\vert \samplespace_n \vert = \binom{N}{n}$
@@ -230,7 +234,7 @@
             \vspace{-1em}
 
             \noindent of being selected.
-        \item The above equation defines a \alert{discrete uniform
+        \item This defines a \alert{discrete uniform
             distribution} (i.e., a probability distribution) on
                 $\samplespace_n$.
         \end{itemize}
@@ -241,7 +245,7 @@
 \begin{frame}
     \begin{Def}[Probability distribution]\label{def:probmeasure}
         \vspace{-0.5em}
-        Let $\samplespace$ denote the (finite, nonempty) set of all samples
+        Let $\samplespace$ denote the (nonempty) set of all samples
         (sample space). We define a real-valued \alert{function}
         $\PP:\samplespace \rightarrow [0,1]$ that assigns a
         \alert{probability} to each \alert{elementary event} $\{s\}$, where
@@ -286,10 +290,11 @@
 % -----------------------------------------------------------------------------
 \begin{frame}
     The \alert{design}
+    \vspace{0.25em}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
         \item is the \alert{central element} of classical survey sampling
-            theory (we will discuss this in more detail shortly);
+            theory;
         \item determines the \alert{sampling distribution} and therefore the
             stochastic properties of estimators (see Section
             2.\ref{sec:basics_randomization}).
@@ -304,13 +309,14 @@
 
     To answer this question, consider the \alert{freedom} we have in
     specifying a design. A design allows us to:
+    \vspace{0.25em}
     \begin{enumerate}
-    \setlength{\itemsep}{6pt}
+    \setlength{\itemsep}{8pt}
         \item choose an \alert{arbitrary} set of possible samples to which
             we assign positive probability;
         \item distribute the total probability mass \alert{arbitrarily}
-            across the samples (elements) in this set, subject to
-            $\sum_{s \in \samplespace} p(s) = 1$.
+            across the samples in this set, subject to $\sum_{s \in
+            \samplespace} p(s) = 1$.
     \end{enumerate}
 \end{frame}
 
@@ -393,12 +399,14 @@
 % -----------------------------------------------------------------------------
 \begin{frame}
     \begin{itemize}
-    \setlength{\itemsep}{8pt}
+    \setlength{\itemsep}{10pt}
         \item The inclusion probabilities $\pi_i$ ($i \in U$) \alert{alone}
             do not fully characterize a design.
-        \item Besides \SRS, for example,
-            there are other designs that also yield inclusion probabilities
-            $\pi_i = n/N$.
+            \vspace{0.25em}
+            \begin{itemize}
+                \item[\goto] Besides \SRS, for example, there are other designs
+                    that also yield inclusion probabilities $\pi_i = n/N$.
+            \end{itemize}
         \item A \alert{necessary and sufficient condition} for \SRS is that
             every possible sample $s$ has the same probability
             $p_{\mSRS}(s)$ of being selected.
@@ -489,15 +497,16 @@
             possible samples.
         \item A \alert{sampling scheme} (sampling algorithm) allows us to
             select a sample without enumerating all possible samples.
-        \begin{itemize}
-        \setlength{\itemsep}{4pt}
-            \item A \alert{sequential} sampling scheme is a selection
-                procedure applied to the list of units in $U$.
-            \item For a fixed-size design with sample size $n$, the sample can
-                be selected using a \alert{draw-by-draw sampling scheme}.
-                At each of the $1,2,\ldots,n$ steps of the procedure, one unit
-                is selected.
-        \end{itemize}
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{4pt}
+                \item A \alert{sequential} sampling scheme is a selection
+                    procedure applied to the list of units in $U$.
+                \item For a fixed-size design with sample size $n$, the sample
+                    can be selected using a \alert{draw-by-draw sampling
+                    scheme}. At each of the $1,2,\ldots,n$ steps of the
+                    procedure, one unit is selected.
+            \end{itemize}
        \item Many schemes and algorithms exist, e.g., eliminatory sampling
            and rejective algorithms; see \citet[][Chapter 3]{tille_2006}.
     \end{itemize}
@@ -511,14 +520,18 @@
 \begin{frame}
     \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
     \begin{itemize}
-    \setlength{\itemsep}{10pt}
+    \setlength{\itemsep}{14pt}
         \item \alert{Randomization inference} concerns the
             \alert{theoretical properties} of estimators under
             \alert{repeated sampling} under the same conditions.
-        \item The main object of interest is the
-            \alert{sampling distribution} of an estimator.
-        \item In particular, it allows us to \alert{quantify the precision
-            of an estimator}.
+            \vspace{0.5em}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item[\goto] The main object of interest is the
+                    \alert{sampling distribution} of an estimator.
+                \item[\goto] In particular, it allows us to \alert{quantify the
+                    precision of an estimator}.
+            \end{itemize}
         \item Let $\theta_U$ denote the (population) characteristic of
             interest (e.g., population mean or total), and let
             $\widehat{\theta}$ be an estimator of $\theta_U$.
@@ -534,11 +547,11 @@
         Let $p$ be given. The \alert{expected value} and \alert{variance}
         of the statistic $\widehat{\theta}(s)$ are defined as
         \begin{align*}
-            \EE_p\big(\widehat{\theta}\,\big) & := \sum_{s \in \samplespace} p(s)
+            \EE\big(\widehat{\theta}\,\big) & := \sum_{s \in \samplespace} p(s)
                 \, \widehat{\theta}(s), && (\text{expected value}) \\[1em]
-            \var_p\big(\widehat{\theta}\,\big) & := \sum_{s \in \samplespace}
+            \var\big(\widehat{\theta}\,\big) & := \sum_{s \in \samplespace}
                 p(s) \, \big\{\widehat{\theta}(s) -
-                \EE_p(\widehat{\theta}\,)\big\}^2. && (\text{variance})
+                \EE(\widehat{\theta}\,)\big\}^2. && (\text{variance})
         \end{align*}
     \end{Def}
     \vspace{0.25em}
@@ -547,8 +560,8 @@
     \begin{itemize}
     \setlength{\itemsep}{6pt}
         \item Expected value and variance are taken \alert{over all possible
-            samples} $s \in \mathscr S$ under the design $p$; we therefore also
-            write $\EE_p$ and $\var_p$.
+            samples} $s \in \mathscr S$ under the design $p$; we therefore
+            write $\EE$ and $\var$.
         \item Recall that $y_i$ ($i \in U$) are fixed quantities, not random
             variables. The sampling distribution arises \alert{exclusively}
             from the random selection of the sample.
@@ -564,17 +577,17 @@
             distribution.
     \end{itemize}
     \begin{align*}
-        \bias_p(\widehat{\theta}\,) & := \EE_p\big(\widehat{\theta}\,\big) -
-            \theta_U & \text{(bias)}\\[1.25em]
-        \se_p\big(\widehat{\theta}\,\big) & :=
-            \sqrt{\var_p\big(\widehat{\theta}\,\big)} &
-            \text{(standard error)}\\[1.25em]
-       \varcoef_p\big(\widehat{\theta}\,\big) & :=
-            \frac{\se_p\big(\widehat{\theta}\,\big)}{\EE_p(\widehat{\theta}\,)},
-            \quad \text{if} \;\, \EE_p(\widehat{\theta}\,) > 0 &
-            \text{(coefficient of variation)}\\[1.25em]
-        \MSE_p(\widehat{\theta}\,) & := \var_p(\widehat{\theta}\,) +
-            \big\{\bias_p(\widehat{\theta}\,)\big\}^2 &
+        \bias(\widehat{\theta}\,) & := \EE\big(\widehat{\theta}\,\big) -
+            \theta_U & \text{(bias)}\\[1.5em]
+        \se\big(\widehat{\theta}\,\big) & :=
+            \sqrt{\var\big(\widehat{\theta}\,\big)} &
+            \text{(standard error)}\\[1.5em]
+       \varcoef\big(\widehat{\theta}\,\big) & :=
+            \frac{\se\big(\widehat{\theta}\,\big)}{\EE(\widehat{\theta}\,)},
+            \quad \text{if} \quad \EE(\widehat{\theta}\,) > 0 &
+            \text{(coefficient of variation)}\\[1.5em]
+        \MSE(\widehat{\theta}\,) & := \var(\widehat{\theta}\,) +
+            \big\{\bias(\widehat{\theta}\,)\big\}^2 &
             \text{(mean squared error)}
     \end{align*}
 \end{frame}
@@ -597,7 +610,7 @@
             \begin{equation*}
                 \var(\widehat{\theta}_1) < \var(\widehat{\theta}_2).
             \end{equation*}
-        \item In most cases, an estimator
+        \item In most cases, an \alert{estimator}
             $\widehat{\var}\big(\widehat{\theta}\,\big)$ of the variance
             $\var\big(\widehat{\theta}\,\big)$ can be constructed using only
             the sample data.
@@ -639,8 +652,9 @@
     \begin{itemize}
     \setlength{\itemsep}{8pt}
         \item We have made \alert{no distributional assumptions} about the
-            variable of interest $y_i$ ($i \in U$). Statistical inference
-            therefore relies on \alert{approximation methods}.
+            variable of interest $y$ or its population values $y_i$ $(i \in
+            U)$. Statistical inference therefore relies on \alert{approximation
+            methods}.
         \item In classical statistics, the \alert{central limit theorem}
             (CLT) can be used to construct confidence intervals.
         \item The notion of asymptotics may seem incompatible with survey
@@ -667,7 +681,7 @@
         \noindent then, as $k \rightarrow \infty$,
         \begin{equation*}
             \frac{\widebar{y}_{s_k}
-            -\widebar{y}_{U_k}}{\widehat{\se}\big(\widebar{y}_{s_k})} \;
+            -\widebar{y}_{U_k}}{\ses\big(\widebar{y}_{s_k})} \;
             \dlim \; N(0, 1).
         \end{equation*}
     \end{EinSatz}
@@ -685,13 +699,13 @@
 \begin{frame}
     \frametitle{\normalsize Confidence intervals}
     \begin{itemize}
-    \setlength{\itemsep}{8pt}
+    \setlength{\itemsep}{12pt}
         \item The CLT allows us to construct a \alert{confidence interval}
             (CI) for the population mean $\myu$ based on its \SRS estimator
             $\mys$, provided that $n$ is sufficiently large.
         \item A $100(1 - \alpha)\%$ confidence interval can be constructed as
             \begin{equation*}
-                \mys \, \pm \, z_{1 - \alpha / 2} \, \widehat{\se}(\mys),
+                \mys \, \pm \, z_{1 - \alpha / 2} \, \ses(\mys),
             \end{equation*}
             \noindent where $z_{1 - \alpha/2}$ is the
             $(1 - \alpha/2)$ quantile of the $N(0,1)$ distribution.

@@ -9,7 +9,7 @@
 
 \begin{Subtask}
     %---------------------------------------------------------------------------
-    \item Draw a simple random sample without replacement (SRS) of size $n =
+    \item Draw a simple random sample without replacement (\SRS) of size $n =
         200$ from the \code{sepe.dat} population, which is of size $N = 800$.
         Estimate
         \begin{enumerate}[i)]
@@ -50,7 +50,7 @@ sepe_sample <- sepe[in_sample, ]
 
 \begin{Schunk}
 \begin{Sinput}
-> sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+> sepe <- read.table("https://stat.ethz.ch/Teaching/Datasets/cas-das/sepe.dat",
                      header = TRUE)
 \end{Sinput}
 \end{Schunk}
@@ -149,7 +149,7 @@ sepe_sample <- sepe[in_sample, ]
             \item \textbf{Mean expenditure per employee.} Restrict attention
                 to establishments with at least one employee. Conditional on
                 the number $n_+$ of such establishments in the sample, they
-                form an SRS from $U_+$. Thus, the usual SRS variance formula
+                form an \SRS from $U_+$. Thus, the usual \SRS variance formula
                 applies within this subpopulation.
 
                 Restrict data and variables to cases with at least one

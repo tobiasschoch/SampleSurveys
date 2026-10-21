@@ -43,7 +43,7 @@ load("sepe.RData")
 @
 
 <<eval=FALSE>>=
-sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+sepe <- read.table("https://stat.ethz.ch/Teaching/Datasets/cas-das/sepe.dat",
                     header = TRUE)
 @
 

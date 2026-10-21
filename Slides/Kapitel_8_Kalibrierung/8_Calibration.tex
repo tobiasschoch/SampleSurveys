@@ -1,0 +1,545 @@
+\documentclass{my_eth_beamer}
+
+\usepackage{my_math_eth}
+
+\numberwithin{equation}{section}
+
+% -----------------------------------------------------------------------------
+% this document
+\title{Introduction to Survey Sampling}
+\newcommand{\TITLE}{Calibration}
+\newcommand{\NR}{8}
+\subtitle{Part \NR: \TITLE}
+\author[Tobias Schoch]{Tobias Schoch}
+\date{2026}
+
+% -----------------------------------------------------------------------------
+\begin{document}
+
+\setstretch{1.1}
+
+\section{\TITLE}\label{sec:calib}
+\setcounter{section}{\NR}
+\setcounter{Bsp}{19}
+\setcounter{Def}{13}
+\setcounter{EinSatz}{1}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{Overview}
+    \noindent \hspace{0.2em}\textcolor{fhnwblue}{\bfseries \NR~\TITLE}
+    \vspace{0.25em}
+    \begin{enumerate}[\NR.1]
+    \setlength{\itemsep}{4pt}
+        \item Information, groups, and domains
+        \item Post-stratification
+        \item Calibration
+    \end{enumerate}
+\end{frame}
+
+\subsection{Information, groups, and domains}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{6pt}
+        \item We consider \alert{integration of information} about the
+            population with the aim of:
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{3pt}
+                \item stratification or unequal-probability sampling
+                    ($\Rightarrow$ efficiency gains),
+                \item adjusting for frame imperfections and nonresponse.
+            \end{itemize}
+        \item Information is available in the form of \alert{unit-level
+            auxiliary variables} and known \alert{population totals} or
+            \alert{group counts}.
+        \item We distinguish the \alert{stage} at which the information is
+            incorporated (role):
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{3pt}
+                \item \alert{Design stage} (sampler), e.g., information from
+                    the sampling frame for identifying domains/strata
+                \item \alert{Estimation stage} (analyst) $\Rightarrow$
+                    post-stratification/calibration
+            \end{itemize}
+        \item Information is often used at \alert{both} stages.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Bsp}[Ophthalmologists]
+
+        \vspace{0.5em}
+
+        Ophthalmologists by language region and gender (MedReg, 2022)
+
+        \vspace{-0.5em}
+
+        \begin{columns}
+            \begin{column}{0.4\textwidth}
+                \begin{center}
+                \begin{tabular}{lr}
+                    \toprule
+                    \addlinespace
+                    Language region & Count\\
+                    \addlinespace
+                    \midrule
+                    German & 1'260\\
+                    \addlinespace
+                    French & 572\\
+                    \addlinespace
+                    Italian & 70\\
+                    \bottomrule
+                \end{tabular}
+                \end{center}
+            \end{column}
+            \begin{column}{0.6\textwidth}
+                \begin{center}
+                \begin{tabular}{llr}
+                    \toprule
+                    \addlinespace
+                    Language region & Gender & Count\\
+                    \addlinespace
+                    \midrule
+                    German & Female & 416\\
+                           & Male & 844\\
+                    \addlinespace
+                    French & Female & 189\\
+                           & Male & 383\\
+                    \addlinespace
+                    Italian & Female & 26\\
+                            & Male & 44\\
+                    \bottomrule
+                \end{tabular}
+                \end{center}
+            \end{column}
+        \end{columns}
+        \vspace{0.5em}
+    \end{Bsp}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Def}[Grouping]\label{def:group}
+        A \alert{grouping} $\mathscr{G}$ of the population $U$ is a partition
+        \begin{equation*}
+            \mathscr{G} = \{U_1,\ldots,U_G\},
+            \qquad
+            U = \bigcup_{g=1}^G U_g,
+            \qquad
+            U_g \cap U_{g'} = \varnothing
+            \quad (g\neq g').
+        \end{equation*}
+    \end{Def}
+
+    \vspace{0.25em}
+
+    \begin{itemize}
+    \setlength{\itemsep}{6pt}
+        \item We use \alert{grouping} as a generic term. Depending on when the
+            groups are defined, they may represent design strata,
+            post-strata, or domains.
+        \item Let $\mathscr H$ denote the stratification used at the design
+            stage. We distinguish, for example:
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{8pt}
+                \item $\mathscr G = \mathscr H$: the groups coincide with the
+                    design strata;
+                \item $\mathscr G$ \alert{refines} $\mathscr H$: each group
+                    $U_g$ is contained in one design stratum.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+\subsection{Post-stratification}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item Let $\mathscr G = \{U_1,\ldots,U_G\}$ denote a grouping of $U$
+            with known group sizes $N_g$.
+        \item The \alert{post-stratified estimator} of the population mean
+            $\myu$ is
+            \begin{equation*}
+                \mypost
+                =
+                \sum_{g=1}^G W_g\,\mys_g,
+                \qquad
+                W_g=\frac{N_g}{N},
+                \qquad
+                \mys_g
+                =
+                \frac{1}{n_g}\sum_{i\in s_g}y_i.
+            \end{equation*}
+        \item If $\mathscr G=\mathscr H$, the post-strata coincide with the
+            design strata and $\mypost=\mystrat$.
+        \item Otherwise, the post-stratum sample sizes
+            \begin{equation*}
+                n_g(S) = \vert S\cap U_g \vert
+            \end{equation*}
+            are \alert{random variables}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{9pt}
+        \item In many applications, $\mathscr{G}$ refines the design
+            stratification $\mathscr{H}$.
+        \item Suppose the original sample is an \alert{\SRS} of fixed size $n$.
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item The post-stratum sample sizes
+                    \begin{equation*}
+                        n_g(S)=|S\cap U_g|
+                    \end{equation*}
+                    are random, with
+                    \begin{equation*}
+                        \EE\{n_g(S)\}=nW_g.
+                    \end{equation*}
+                \item It is possible that $n_g(S)=0$ for some post-stratum.
+                    This becomes unlikely when the expected post-stratum sample
+                    sizes $nW_g$ are sufficiently large.
+                \item In practice, post-strata with no or very few sampled
+                    units may need to be \alert{combined}.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{9pt}
+        \item If the post-stratum sample sizes are sufficiently large, an
+            \alert{approximate variance estimator} is
+            \citep[][Remark 7.10.6]{sarndal_swensson_etal_1992}
+            \begin{equation*}
+                \varest\big(\mypost\big) \approx
+                \underbrace{(1-f)\sum_{g=1}^G
+                    W_g\,\frac{\widehat{\sigma}_g^2}{n}}_{
+                    =\,\varest^{\mprop}(\mypost)} +
+                \color{magenta}
+                \underbrace{\color{black}
+                    \frac{1-f}{n}
+                    \sum_{g=1}^G
+                    (1-W_g)\frac{\widehat{\sigma}_g^2}{n}}_{
+                    \substack{\text{\color{magenta}additional contribution from}\\
+                    \text{\color{magenta}random post-stratum sample sizes}}}
+                \color{black}.
+            \end{equation*}
+            \begin{itemize}
+                \item[\goto] The approximation is understood
+                    \alert{conditional} on $n_g(S)>0$ for all $g = 1, \ldots,
+                    G$.
+            \end{itemize}
+        \item The second term is of smaller order and becomes
+            \alert{negligible} as the post-stratum sample sizes increase.
+            Hence,
+            \begin{equation*}
+                \widehat{\var}\big(\mypost\big)
+                \approx
+                \widehat{\var}_{\mprop}\big(\mypost\big).
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item For sufficiently large post-stratum sample sizes, an \SRS with
+            post-stratification is approximately as \alert{efficient} as
+            stratified \SRS with \alert{proportional allocation}
+            \citep{holt_smith_1979}.
+        \item Stratification at the design stage is useful when we want to
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{4pt}
+                \item improve \alert{efficiency}, or
+                \item control the sample sizes for important
+                    \alert{domains}.
+            \end{itemize}
+        \item Post-stratification is more \alert{flexible}: different
+            groupings can be used at the estimation stage for different
+            variables or purposes.
+        \item This flexibility is particularly useful in
+            \alert{multipurpose surveys}.
+    \end{itemize}
+\end{frame}
+
+\subsection{Calibration}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item Let $w_i=1/\pi_i$ denote the \alert{design weight} of sampled
+            unit $i = 1, \ldots, n$.
+        \item \alert{Calibration} replaces the design weights $w_i$ by
+            \alert{calibration weights} $w_i^*$ that \citep{deville_sarndal_1992}
+            \vspace{0.25em}
+            \begin{enumerate}
+            \setlength{\itemsep}{4pt}
+                \item remain as close as possible to the design weights, and
+                \item satisfy the \alert{calibration constraints}
+                    \begin{equation*}
+                        \sum_{i\in s}w_i^*\,\vx_i=\tvx, \qquad
+                        \tvx=\sum_{i\in U}\vx_i,
+                    \end{equation*}
+                    where $\vx_i=(x_{i1},\ldots,x_{iq})^T$
+                    is a vector of auxiliary variables.
+            \end{enumerate}
+        \item Thus, the weighted sample reproduces the known
+            \alert{population totals} of the auxiliary variables.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{11pt}
+        \item The \alert{calibration estimator} of the population total $\ty$
+            is
+            \begin{equation*}
+                \widehat t_y^{\;cal} =
+                \sum_{i\in s} w_i^* y_i.
+            \end{equation*}
+        \item Regarding the available \alert{auxiliary information}, we
+            distinguish two cases:
+            \vspace{0.5em}
+            \begin{description}
+            \setlength{\itemsep}{8pt}
+                \item[Case 1)] $\vx_i$ is known for all $i\in U$; hence,
+                    the population total $\tvx$ is also known.
+                \item[Case 2)] $\vx_i$ is known only for $i\in s$, but the
+                    population total $\tvx$ is known from an external source.
+            \end{description}
+        \item For calibration, the \alert{essential requirement} is that
+            $\vx_i$ is available for the sampled units and that $\tvx$ is
+            known.
+    \end{itemize}
+\end{frame}
+
+%FIXME:
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\normalsize{Examples of choices for $\vx_i$} (and the
+    corresponding population totals)}
+    \begin{center}
+    \begin{tabular}{lll}
+        \toprule
+        \addlinespace
+        Case & Auxiliary vector ($i \in s$) & Known population total\\
+        \addlinespace
+        \midrule
+        \addlinespace
+        1 & $1$ & $N$\\
+        \addlinespace
+        2 & $x_i$ & $\tx$\\
+        \addlinespace
+        3 & $(1, \, x_i)^T$ & $(N, \, \tx)^T$\\
+        \addlinespace
+        4 & $\big(\indicator_i^D, \, \indicator_i^F, \, \indicator_i^I\big)^T$
+            & $\big(N_D, N_F, N_I\big)^T$\\
+        \addlinespace
+        \bottomrule
+    \end{tabular}
+    \end{center}
+    \vspace{0.5em}
+    with indicator variables for language region: $\indicator_i^D=1$ if the
+    unit is German-speaking and 0 otherwise; analogously for the French (F)
+    and Italian (I) language regions. $N_D$, $N_F$, and $N_I$ denote the
+    corresponding population sizes.
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Bsp}[Language Regions]
+        Calibration with
+        \begin{equation*}
+            \vx_i =
+            \Big(1,\,\indicator_i^D,\,\indicator_i^F,\,
+                \indicator_i^I\Big)^T
+            \qquad \text{and} \qquad
+            \tvx =
+            \Big(N,\,N_D,\,N_F,\,N_I\Big)^T
+        \end{equation*}
+        leads to \alert{linearly dependent calibration variables}.
+    \end{Bsp}
+    \vspace{0.5em}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item Let $\bold X$ denote the $(n\times q)$ \alert{matrix} given by
+            $\bold X = \big(\vx_1^T,\ldots,\vx_n^T\big)^T.$
+            In this example, $\bold X$ does \alert{not have full column rank}.
+        \item We can therefore either
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{5pt}
+                \item omit the constant $1$ from $\vx_i$ and $N$ from
+                    $\tvx$, or
+                \item omit one language-region indicator and the
+                    corresponding population count.
+            \end{itemize}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item The calibration constraints generally do not determine the
+            weights $w_i^*$ uniquely. We therefore choose weights that remain
+            \alert{as close as possible} to the design weights $w_i$.
+
+        \item \citet{deville_sarndal_1992} consider several distance
+            functions. One choice is the \alert{chi-square distance}
+            \begin{equation*}
+                D_{\chi^2}(\vw,\vw^*)
+                =
+                \sum_{i\in s}
+                \frac{(w_i^*-w_i)^2}{q_iw_i},
+                \qquad q_i>0.
+            \end{equation*}
+
+        \item The calibration weights are obtained by solving
+            \begin{equation*}
+                \min_{\vw^*}D_{\chi^2}(\vw,\vw^*)
+                \qquad\text{subject to}\qquad
+                \sum_{i\in s}w_i^*\vx_i=\tvx.
+            \end{equation*}
+
+        \item In what follows, we set $q_i\equiv1$.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item For the chi-square distance, the \alert{calibration weights}
+            have the closed-form solution
+            \begin{equation*}
+                w_i^* =
+                w_i\left[
+                    1+
+                    \Big(\tvx - \tvxs^{\,\mHT}\Big)^T
+                    \left(
+                        \sum_{j\in s}w_j\vx_j\vx_j^T
+                    \right)^{-1}
+                    \vx_i
+                \right],
+            \end{equation*}
+            where
+            \begin{equation*}
+                \tvxs^{\,\mHT}=\sum_{i\in s}w_i\vx_i
+            \end{equation*}
+            is the Horvitz--Thompson estimator of $\tvx$.
+        \item The resulting \alert{calibration estimator} of $\ty$ can be
+            written as
+            \begin{equation*}
+                \widehat t_y^{\;cal} = \tysht_y +
+                \big(\tvx - \tvxs\big)^T\vbs,
+                \qquad \text{where} \qquad
+                \vbs = \left(
+                    \sum_{i\in s}w_i\vx_i\vx_i^T
+                \right)^{-1}
+                \sum_{i\in s}w_i\vx_i y_i.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{11pt}
+        \item The calibration estimator $\widehat t_y^{\;cal}$
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{8pt}
+                \item is generally \alert{not design-unbiased}, but is
+                    design consistent under suitable regularity conditions;
+                \item can be more \alert{efficient} than the HT estimator
+                    when the auxiliary variables are informative about $y$;
+                \item coincides, for the chi-square distance, with the
+                    \alert{generalized regression estimator} (GREG).
+            \end{itemize}
+        \item \citet{deville_sarndal_1992} showed that calibration estimators
+            based on a broad class of \alert{distance functions} are
+            asymptotically equivalent.
+        \item Variance estimation can be based on the residuals
+            $y_i-\vx_i^T\vbs$.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{Why use calibration?}
+    \begin{itemize}
+    \setlength{\itemsep}{11pt}
+        \item Calibration provides a systematic way to incorporate
+            \alert{auxiliary information} into estimation.
+        \item Important purposes include:
+            \vspace{0.25em}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item improving \alert{efficiency} when the auxiliary
+                    variables are informative about $y$;
+                \item ensuring \alert{consistency with known population
+                    totals};
+                \item reducing the effects of \alert{nonresponse} or frame
+                    imperfections.
+            \end{itemize}
+        \item For nonresponse adjustment, useful auxiliary variables should
+            be related to the \alert{response propensity} and/or the
+            \alert{variables of interest}; see
+            \citet{sarndal_lundstrom_2005}.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{Historical context}
+    \begin{itemize}
+    \setlength{\itemsep}{10pt}
+        \item The basic idea of adjusting survey weights to incorporate known
+            population information predates \citet{deville_sarndal_1992}.
+        \item An important early example is \alert{iterative proportional
+            fitting} (raking), introduced by \citet{deming_stephan_1940} to
+            adjust contingency tables to known marginal totals.
+        \item \citet{deville_sarndal_1992} provided a general framework for
+            \alert{calibration weighting}, based on calibration constraints
+            and distance functions.
+        \item \alert{Entropy balancing} \citep{hainmueller_2012}, widely used
+            in the social sciences, can be viewed as a special case of
+            calibration weighting using an entropy-type distance function.
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\setcounter{section}{\the\numexpr\value{section}-1\relax}
+\begin{frame}
+    \frametitle{References}
+    {\footnotesize
+        \setstretch{1.1}
+        \bibliographystyle{fhnw_en}
+        \bibliography{master}
+    }
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\lastpage
+
+\end{document}

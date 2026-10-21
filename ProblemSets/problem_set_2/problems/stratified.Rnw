@@ -57,7 +57,7 @@ dn_sepe <- svydesign(ids = ~1, strata = ~strat, fpc = ~Nh,
 \begin{Solution}
 
 <<eval=FALSE>>=
-sepe <- read.table("http://stat.ethz.ch/Teaching/Datasets/WBL/sepe.dat",
+sepe <- read.table("https://stat.ethz.ch/Teaching/Datasets/cas-das/sepe.dat",
                     header = TRUE)
 @
 

@@ -1,0 +1,180 @@
+\newcommand{\widebar}{\bar}
+
+% Sampling
+\newcommand{\samplespace}{\ensuremath{\mathscr{S}}} % set of all samples
+
+\newcommand{\ES}{\mbox{ES}\xspace}                  % srswor
+\newcommand{\mES}{\ensuremath{\mathrm{ES}}}
+\newcommand{\SRS}{\mbox{SRS}\xspace}
+\newcommand{\mSRS}{\ensuremath{\mathrm{SRS}}}
+
+\newcommand{\SES}{\mbox{SES}\xspace}                % stratified srswor
+\newcommand{\mSES}{\ensuremath{\mathrm{SES}}}
+\newcommand{\STSI}{\mbox{STSI}\xspace}
+\newcommand{\mSTSI}{\ensuremath{\mathrm{STSI}}}
+
+\newcommand{\mstrat}{\ensuremath{\mathrm{strat}}}   % strat
+\newcommand{\mprop}{\ensuremath{\mathrm{prop}}}     % proportional alloc.
+\newcommand{\mopt}{\ensuremath{\mathrm{opt}}}       % optimal alloc.
+
+\newcommand{\mpost}{\ensuremath{\mathrm{post}}}   	% post-strat
+
+\newcommand{\KES}{\mbox{KES}\xspace}                % srswor cluster sampling
+\newcommand{\mKES}{\ensuremath{\mathrm{KES}}}
+\newcommand{\SIC}{\mbox{SIC}\xspace}
+\newcommand{\mSIC}{\ensuremath{\mathrm{SIC}}}
+
+\newcommand{\PPS}{\mbox{PPS}\xspace}                % pps sampling
+\newcommand{\mPPS}{\ensuremath{\mathrm{PPS}}}
+
+\newcommand{\SYS}{\mbox{SYS}\xspace}                % systematic sampling
+\newcommand{\mSYS}{\ensuremath{\mathrm{SYS}}}
+
+\newcommand{\op}{\ensuremath{\mathrm{o}_p}}         % little o_p
+\newcommand{\Op}{\ensuremath{\mathrm{O}_p}}         % big O_p
+
+
+% Math. Abkürzungen und Bezeichnungen
+% y-variable
+% Allgemein
+\newcommand{\tyspi}{\ensuremath{\widehat{t}}_{\pi}} % expansion estimator, HT
+
+% SRS
+\newcommand{\ty}{\ensuremath{t}_y}                % pop total
+\newcommand{\tys}{\ensuremath{\widehat{t}}_y}     % sample total
+\newcommand{\tx}{\ensuremath{t_x}}                % pop x-total
+\newcommand{\txs}{\ensuremath{\widehat{t}_x}}     % sample x-total
+
+\newcommand{\myu}{\ensuremath{\widebar{y}_U}}        % y pop mean
+\newcommand{\mys}{\ensuremath{\widebar{y}}}         % y sample mean
+\newcommand{\mx}{\ensuremath{\widebar{x}_U}}        % x pop mean
+\newcommand{\mxs}{\ensuremath{\widebar{x}}}         % x sample mean
+
+\newcommand{\sigmay}{\ensuremath{\sigma_y}}           % y pop std.dev.
+\newcommand{\sigmays}{\ensuremath{\widehat{\sigma}_y}}% y sample std.dev.
+
+\newcommand{\varyu}{{\ensuremath{\sigma_y^2}}}         	% pop var
+\newcommand{\varys}{\ensuremath{\widehat{\sigma}_y^2}} 	% sample var
+
+\newcommand{\varu}{{\ensuremath{\sigma^2}}}         	% pop var
+\newcommand{\vars}{\ensuremath{\widehat{\sigma}^2}} 	% sample var
+
+\newcommand{\propu}{\ensuremath{P}}                 % proportion
+\newcommand{\props}{\ensuremath{\widehat{P}}}       % proportion in sample
+
+\newcommand{\rat}{\ensuremath{R_U}}                 % ratio
+\newcommand{\rats}{\ensuremath{\widehat{R}}}        % ratio in sample
+
+% STSI
+\newcommand{\Nh}{\ensuremath{N_{h}}}              % pop size
+\newcommand{\Wh}{\ensuremath{W_h}}                    % weight
+\newcommand{\tyh}{\ensuremath{t_{y,h}}}              % pop total
+\newcommand{\tyhs}{\ensuremath{\widehat{t}_{h}}}   % sample total
+
+\newcommand{\myh}{\ensuremath{\widebar{y}_{h,U}}}   % pop mean
+\newcommand{\myhs}{\ensuremath{\widebar{y}_h}}      % sample mean
+
+\newcommand{\mystrat}{\ensuremath{\widebar{y}^{\, \mstrat}}}    % sample mean
+\newcommand{\tystrat}{\ensuremath{\widehat{t}^{\;\, \mstrat}}}  % sample total
+
+\newcommand{\varyh}{\ensuremath{\sigma_{h}^2}}            % pop var
+\newcommand{\varyhs}{\ensuremath{\widehat{\sigma}_{h}^2}} % sample var
+
+\newcommand{\sigmayh}{\ensuremath{\sigma_{y}}}            % pop std.dev
+\newcommand{\sigmayhs}{\ensuremath{\widehat{\sigma}_{y}}} % sample std.dev
+
+\newcommand{\proph}{\ensuremath{P_h}}                 % proportion
+\newcommand{\prophs}{\ensuremath{\widehat{P}_h}}      % proportion in sample
+
+\newcommand{\propalloc}{\ensuremath{\mathrm{prop}}}   % proportional allocation
+\newcommand{\optalloc}{\ensuremath{\mathrm{opt}}}     % Neyman optimal allocation
+\newcommand{\auxalloc}{\ensuremath{\mathrm{aux}}}     % auxiliary allocation
+
+% Cluster SI
+\newcommand{\tyi}{\ensuremath{t_{yi}}}              % pop total
+\newcommand{\tyis}{\ensuremath{\widehat{t}_{yi}}}   % sample total
+
+\newcommand{\myi}{\ensuremath{\widebar{y}_{i,U}}}   % pop mean
+\newcommand{\myis}{\ensuremath{\widebar{y}_i}}      % sample mean
+
+\newcommand{\mt}{\ensuremath{\widebar{t}_{U}}}      % pop mean of totals
+\newcommand{\mts}{\ensuremath{\widebar{t}}}         % sample mean of totals
+
+\newcommand{\mm}{\ensuremath{\overline{M}_{U}}}      % pop mean of M_i
+\newcommand{\mms}{\ensuremath{\overline{M}}}         % sample mean of M_i
+
+\newcommand{\varyi}{\ensuremath{\sigma_{i}^2}}            % pop var
+\newcommand{\varyis}{\ensuremath{\widehat{\sigma}_{i}^2}} % sample var
+% \newcommand{\varyi}{\ensuremath{\sigma_{yi}^2}}            % pop var
+% \newcommand{\varyis}{\ensuremath{\widehat{\sigma}_{yi}^2}} % sample var
+
+\newcommand{\sigmayi}{\ensuremath{\sigma_{i}}}            % pop std.dev
+\newcommand{\sigmayis}{\ensuremath{\widehat{\sigma}_{i}}} % sample std.dev
+% \newcommand{\sigmayi}{\ensuremath{\sigma_{yi}}}            % pop std.dev
+% \newcommand{\sigmayis}{\ensuremath{\widehat{\sigma}_{yi}}} % sample std.dev
+
+\newcommand{\deff}{\ensuremath{\mathsf{deff}}}         % design effect
+
+% Unequal
+\newcommand{\mHT}{\ensuremath{\mathrm{HT}}}             % HT
+\newcommand{\tysht}{\ensuremath{\widehat{t}^{\;\mHT}}}  % HT estimator
+\newcommand{\mHJ}{\ensuremath{\mathrm{HJ}}}             % HJ (Hajek)
+
+% Varianzzerlegung (ANOVA)
+\newcommand{\SST}{\ensuremath{SST}}    % total sum of squares
+\newcommand{\SSW}{\ensuremath{SSW}}    % within sum of squares
+\newcommand{\SSB}{\ensuremath{SSB}}    % between sum of squares
+
+% Operatoren
+\newcommand{\EE}{\ensuremath{\mathbbm{E}_p}}               % expected value
+\newcommand{\var}{\ensuremath{\mathsf{var}_p}}            % variance
+\newcommand{\varest}{\ensuremath{\widehat{\mathsf{var}}_p}} % variance est.
+\newcommand{\cov}{\ensuremath{\mathsf{cov}_p}}            % covariance
+\newcommand{\se}{\ensuremath{\mathsf{SE}_p}}              % standard error
+\newcommand{\ses}{\ensuremath{\widehat{\mathsf{SE}}_p}}   % est. standard error
+
+\newcommand{\bias}{\ensuremath{\mathsf{bias}_p}}          % bias
+\newcommand{\varcoef}{\ensuremath{\mathsf{CV}_p}}         % coef. of variation
+\newcommand{\varcoefs}{\ensuremath{\widehat{\mathsf{CV}}_p}}  % est. coef. of variation
+\newcommand{\MSE}{\ensuremath{\mathsf{MSE}_p}}            % coef. of variation
+
+% Varia
+\newcommand{\PP}{\ensuremath{\mathbbm{P}}}               % prob. measure
+\newcommand{\indicator}{\ensuremath{\mathbbm{1}}}       % indicator variable
+\newcommand{\R}{\ensuremath{\mathbbm{R}}}                % real numbers
+\newcommand{\N}{\ensuremath{\mathbbm{N}}}                % natural numbers
+
+% Convegence
+\newcommand{\dlim}{\ensuremath{\overset{d}{\longrightarrow}}} % in law
+\newcommand{\plim}{\ensuremath{\overset{p}{\longrightarrow}}} % in prob
+
+% Post-stratification
+\newcommand{\mypost}{\ensuremath{\widebar{y}^{\, \mpost}}}    % sample mean
+
+% Calibration
+\newcommand{\tvx}{\bold{t}_{\,x}}				% Total x-Vector
+\newcommand{\tvxs}{\widehat{\bold{t}}_{\,x}}	% Total x-Vector
+\newcommand{\vx}{\bold{x}}						% x-Vector
+\newcommand{\vw}{\bold{w}}						% w-Vector
+\newcommand{\vv}{\bold{v}}						% v-Vector
+\newcommand{\vu}{\bold{u}}						% u-Vector
+\newcommand{\vd}{\bold{d}}						% d-Vector
+\newcommand{\vb}{\bold{b}}				        % beta
+\newcommand{\vbs}{\widehat{\bold{b}}}           % beta estimated
+\newcommand{\vtheta}{\ensuremath{\bm\theta}}    % theta-vector
+
+% GREG and model-based
+\newcommand{\nots}{i \in U \setminus s}			    % non-sampled part
+\newcommand{\yhat}{\widetilde{Y}_i}	                % predicted value
+\newcommand{\mpred}{\ensuremath{\mathrm{pred}}}     % pred
+\newcommand{\msynth}{\ensuremath{\mathrm{synth}}}   % synth
+\newcommand{\mgreg}{\ensuremath{\mathrm{greg}}}     % greg
+\newcommand{\mrat}{\ensuremath{\mathrm{rat}}}       % rat
+\newcommand{\ypredest}{\widehat{t}_{\;\,y}^{\;\,\mpred}} % model-based prediction est.
+\newcommand{\ysynthest}{\widehat{t}_{\;\,y}^{\;\,\msynth}} % model-based synthetic est.
+\newcommand{\tygreg}{\widehat{t}_{\;\,y}^{\;\,\mgreg}}  % greg est
+\newcommand{\tyrat}{\widehat{t}_{\;\,y}^{\;\,\mrat}} % ratio est
+\newcommand{\txsample}{\ensuremath{\widehat{t}_{x,s}}}     % sample x-total
+\newcommand{\tysample}{\ensuremath{\widehat{t}_{y,s}}}     % sample y-total
+
+

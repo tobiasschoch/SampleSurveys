@@ -7,7 +7,7 @@
 % -----------------------------------------------------------------------------
 % this document
 \title{Introduction to Survey Sampling}
-\newcommand{\TITLE}{Variance Estimation}
+\newcommand{\TITLE}{Variance estimation}
 \newcommand{\NR}{7}
 \subtitle{Part \NR: \TITLE}
 \author[Tobias Schoch]{Tobias Schoch}
@@ -30,8 +30,8 @@
     \noindent \hspace{0.2em}\textcolor{fhnwblue}{\bfseries \NR~\TITLE}
     \begin{enumerate}[\NR.1]
     \setlength{\itemsep}{4pt}
-        \item Taylor Series Expansion (Linearization)
-        \item Resampling Methods
+        \item Taylor series expansion (linearization)
+        \item Resampling methods
             \begin{enumerate}[a)]
             \setlength{\itemsep}{4pt}
                 \item Bootstrap
@@ -79,21 +79,21 @@
             \begin{equation*}
                 \frac{\big\vert \bias\big(\rats\,\big) \big\vert}{%
                     \se\big(\rats\,\big)} \leq
-                    \sqrt{\frac{1}{n} - \frac{1}{N}} \varcoef_x,
+                    \sqrt{\frac{1}{n} - \frac{1}{N}} \mathsf{CV}_x,
             \end{equation*}
-            where $\varcoef_x = \sigma_x / \mx$ is the coefficient of
+            where $\mathsf{CV}_x = \sigma_x / \mx$ is the coefficient of
             variation.
             \vspace{0.25em}
             \begin{itemize}
             \setlength{\itemsep}{10pt}
                 \item[\goto] Thus, the bias is small relative to the
                     estimator's standard error when the sample is sufficiently
-                    large and $\varcoef_x$ is not too large.
+                    large and $\mathsf{CV}_x$ is not too large.
             \end{itemize}
     \end{itemize}
 \end{frame}
 
-\subsection{Taylor Series Expansion (Linearization)}
+\subsection{Taylor series expansion (linearization)}
 
 \begin{frame}
     \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
@@ -165,7 +165,7 @@
             \end{equation*}
         \item A corresponding \alert{variance estimator} is
             \begin{equation*}
-                \widehat{\var}(\rats) =
+                \varest(\rats) =
                 \left(1-\frac{n}{N}\right)
                 \frac{\widehat{\sigma}_{\,\widehat{z}}^{\,2}}{n\,\mxs^2},
                 \qquad \text{where} \qquad
@@ -194,7 +194,7 @@
     \end{itemize}
 \end{frame}
 
-\subsection{Resampling Methods}
+\subsection{Resampling methods}
 
 % -----------------------------------------------------------------------------
 \begin{frame}
@@ -252,8 +252,7 @@
         \item The \alert{bootstrap variance estimator} is the sample variance
             of the replicate estimates:
             \begin{equation*}
-                \widehat{\var}_{\mathrm{boot}\;}(\widehat{\theta}) =
-                \frac{1}{B-1}
+                \varest^{\mathrm{boot}\;}(\widehat{\theta}) = \frac{1}{B-1}
                 \sum_{b=1}^B
                 \left(\widehat{\theta}_b^*
                 -\widebar{\theta}^{\,*}\right)^2, \qquad
@@ -275,7 +274,7 @@
             population correction} \citep[][Chapter 5]{wolter_2007}
             \vspace{-0.5em}
             \begin{equation*}
-                (1-f)\, \widehat{\var}_{\mathrm{boot}}(\widehat{\theta}).
+                (1-f)\, \varest^{\mathrm{boot}}(\widehat{\theta}).
             \end{equation*}
     \end{itemize}
 \end{frame}
@@ -331,7 +330,7 @@
 \begin{frame}
     \frametitle{\large Jackknife}
     \begin{itemize}
-    \setlength{\itemsep}{8pt}
+    \setlength{\itemsep}{12pt}
         \item Let $s$ be an \SRS of size $n$ from $U$.
         \item We are interested in the variance of an estimator
             $\widehat{\theta}$ of the characteristic $\theta_U$, where
@@ -342,42 +341,39 @@
             (delete-1) jackknife variance estimator.
         \item In the \alert{delete-1 jackknife}, one observation at a time is
             omitted from $s$, and the estimator is recomputed without that
-            observation. We write $\widehat{\theta}_{(-j)}$ for the estimator
-            $\widehat{\theta}$ computed \emph{without} the $j$th observation
+            observation.
+        \item We write $\widehat{\theta}_{(-j)}$ for the estimator
+            $\widehat{\theta}$ computed \alert{without} the $j$th observation
             ($j\in s$).
-        \item Example: For $\widehat{\theta}:=\mys$,
-            $\widehat{\theta}_{(-j)} = 1/(n-1)\sum_{i\in s\setminus j} y_i$.
     \end{itemize}
 \end{frame}
 
 % -----------------------------------------------------------------------------
 \begin{frame}
     \begin{itemize}
-    \setlength{\itemsep}{6pt}
+    \setlength{\itemsep}{10pt}
+        \item For example, let $\widehat{\theta}:=\mys$, then
+            \begin{equation*}
+                \widehat{\theta}_{(-j)} = \frac{1}{n - 1}
+                    \sum_{i\in s\setminus j} y_i.
+            \end{equation*}
         \item The delete-1 jackknife \alert{variance estimator} for
             $\widehat{\theta}$ is
-            \begin{equation}\label{eq:variance_jk}
-                \widehat{\var}_{\mathrm{JK}}(\widehat{\theta}\,) = \frac{n}{(n
+            \begin{equation*}
+                \varest^{\mathrm{JK}}(\widehat{\theta}\,) = \frac{n}{(n
                 - 1)} \sum_{j = 1}^n \left(\widehat{\theta}_{(-j)} -
                 \widehat{\theta}\,\right)^2.
-            \end{equation}
-
-            \vspace{-1.5em}
-
-        \item An \alert{alternative estimator} is obtained by replacing
-            $\widehat{\theta}$ in (\ref{eq:variance_jk}) by
-            $\widetilde{\theta}$, where
-            $\widetilde{\theta}=(1/n)\sum_{j=1}^n\widehat{\theta}_{(-j)}$;
-            see \citet[][p.~170]{wolter_2007}.
-        \item We denote this alternative estimator by
-            $\widehat{\var}_{\mathrm{JK^*}}$. For nonlinear estimators,
-            typically $\widehat{\theta}\neq\widetilde{\theta}$.
-        \item The variance estimators $\widehat{\var}_{\,\mathrm{JK}}$ and
-            $\widehat{\var}_{\,\mathrm{JK^*}}$ are reliable when the sampling
-            fraction $f$ is small.
-        \item If $f$ is \alert{not small}, both variance estimators can be
-            substantially biased. In this case, it is recommended to multiply
-            them by $(1-f)$; see \citep[][p.~167]{wolter_2007}.
+            \end{equation*}
+        \item The variance estimator is reliable when the sampling fraction $f$
+            is \alert{small}.
+            \vspace{0.5em}
+            \begin{itemize}
+            \setlength{\itemsep}{2pt}
+                \item[\goto] If $f$ is \alert{not small}, it can be
+                    substantially biased. In this case, it is recommended to
+                    multiply it by $(1-f)$; see e.g.
+                    \citet[][p.~167]{wolter_2007}.
+            \end{itemize}
     \end{itemize}
 \end{frame}
 
@@ -389,10 +385,15 @@
             \alert{complex designs}; see, e.g., \citet[][Chapter 4]{wolter_2007}.
         \item The jackknife can also be generalized by deleting $d>1$
             observations at a time, i.e., the \alert{delete-$d$ jackknife}.
-            \citet{shao_wu_1989} further showed that, with an appropriate
-            choice of $d$, the delete-$d$ jackknife variance estimator can be
-            consistent for statistics such as the median or a linear
-            combination of quantiles, unlike the delete-1 jackknife.
+            \vspace{0.5em}
+            \begin{itemize}
+            \setlength{\itemsep}{2pt}
+                \item[\goto] \citet{shao_wu_1989} further showed that, with an
+                    appropriate choice of $d$, the delete-$d$ jackknife
+                    variance estimator can be consistent for statistics such as
+                    the median or a linear combination of quantiles, unlike the
+                    delete-1 jackknife.
+            \end{itemize}
     \end{itemize}
 \end{frame}
 

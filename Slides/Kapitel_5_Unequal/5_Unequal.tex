@@ -7,7 +7,7 @@
 % -----------------------------------------------------------------------------
 % this document
 \title{Introduction to Survey Sampling}
-\newcommand{\TITLE}{Unequal Probability Sampling}
+\newcommand{\TITLE}{Unequal probability sampling}
 \newcommand{\NR}{5}
 \subtitle{Part \NR: \TITLE}
 \author[Tobias Schoch]{Tobias Schoch}
@@ -28,11 +28,20 @@
 \begin{frame}
     \frametitle{Overview}
     \noindent \hspace{0.2em}\textcolor{fhnwblue}{\bfseries \NR~\TITLE}
+    \value{0.25em}
     \begin{enumerate}[\NR.1]
-        \item The Horvitz--Thompson Estimation Principle
-        \item Variance Estimation
-        \item Probability Proportional to Size (PPS)
-        \item Selecting a PPS Sample
+    \setlength{\itemsep}{4pt}
+        \item The Horvitz--Thompson estimation principle
+        \item Variance estimation
+        \item Probability proportional to size (PPS)
+        \item Supplements
+            \vspace{0.25em}
+            \begin{enumerate}[\NR.\number\numexpr\value{enumi}\relax A]
+            \setlength{\itemsep}{4pt}
+                \item Selecting a PPS sample
+                \item Fixed sample size
+                \item Approximation of second-order inclusion probabilities
+            \end{enumerate}
     \end{enumerate}
 \end{frame}
 
@@ -65,17 +74,17 @@
     \setlength{\itemsep}{8pt}
         \item specified a \alert{probability distribution} $\PP$ over the set of
             all possible samples $\samplespace$ and
-        \item thereby defined the \alert{inclusion probabilities} $\pi_i :=
-            \PP(i \in s)$, $i \in U$.
+        \item thereby defined the \alert{inclusion probabilities}
+            \begin{equation*}
+                \pi_i := \PP(i \in s), \qquad i \in U.
+            \end{equation*}
     \end{itemize}
 \end{frame}
 
 % -----------------------------------------------------------------------------
 \begin{frame}
     In what follows, we take a \alert{bottom-up approach},
-
     \vspace{0.25em}
-
     \begin{itemize}
     \setlength{\itemsep}{8pt}
         \item in which the inclusion probabilities $\pi_i$ are assumed to be
@@ -87,13 +96,13 @@
     \vspace{2em}
 
     \textbf{\textcolor{fhnwblue}{Motivation}}
-
     \vspace{0.25em}
-
     \begin{itemize}
     \setlength{\itemsep}{8pt}
         \item We are interested in estimating the population total
-            $\ty = \sum_{i \in U} y_i$.
+            \begin{equation*}
+                \ty = \sum_{i \in U} y_i.
+            \end{equation*}
         \item Recall from Chapter 4 that estimators under \alert{stratified}
             simple random sampling (\STSI) can, under suitable conditions, be
             \alert{more efficient} than under \SRS.
@@ -128,7 +137,7 @@
     \end{itemize}
 \end{frame}
 
-\subsection{The Horvitz--Thompson Estimation Principle}
+\subsection{The Horvitz--Thompson estimation principle}
 
 % -----------------------------------------------------------------------------
 \begin{frame}
@@ -142,12 +151,12 @@
         unequal} inclusion probabilities $\pi_i>0$ ($i\in U$). The
         \alert{Horvitz--Thompson} (HT) estimator of the population total
         $\ty$ is
-        \begin{equation}\label{eq:unequal_ht}
+        \begin{equation*}
             \tysht_{\;y} = \sum_{i \in s} \frac{y_i}{\pi_i}.
-        \end{equation}
+        \end{equation*}
     \end{Def}
     \begin{itemize}
-    \setlength{\itemsep}{10pt}
+    \setlength{\itemsep}{8pt}
         \item The estimator should more properly be called the
             \alert{Narain--Horvitz--Thompson} estimator; \citet{narain_1951}
             proposed it ``solely on intuitive grounds'' \citep[][p.
@@ -186,7 +195,7 @@
 
 % -----------------------------------------------------------------------------
 \begin{frame}
-    \frametitle{\normalsize Estimating the Population Mean}
+    \frametitle{\normalsize Estimating the population mean}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
         \item The population mean $\myu$ can be estimated using the HT estimator
@@ -213,29 +222,24 @@
     \setlength{\itemsep}{12pt}
         \item The estimator $\widehat{N}$ can be viewed as the HT estimator of
             $N$ with $y_i\equiv1$, i.e., $\widehat{N}=\sum_{i\in s}1\,w_i$.
-        \item The \alert{H{\'a}jek estimator}:
+        \item The \alert{H{\'a}jek estimator} is a \alert{ratio estimator}:
+            \begin{equation*}
+                \mys^{\;\mHJ} = \frac{\tysht_y}{\widehat{N}}
+            \end{equation*}
             \vspace{0.25em}
             \begin{itemize}
-            \setlength{\itemsep}{8pt}
-                \item is a \alert{ratio estimator}
-
-                    \begin{equation*}
-                        \mys^{\;\mHJ} = \frac{\tysht_y}{\widehat{N}}
-                    \end{equation*}
-
-                    \vspace{0.5em}
-
-                    and is generally \alert{biased} in finite samples,
+            \setlength{\itemsep}{12pt}
+                \item[\goto] and is generally \alert{biased} in finite samples,
                     although,
-                \item the bias is typically small for sufficiently
+                \item[\goto] the bias is typically small for sufficiently
                     \alert{large samples}.
-                \item is frequently used in practice even when $N$ is
+                \item[\goto] is frequently used in practice even when $N$ is
                     \alert{known}.
             \end{itemize}
     \end{itemize}
 \end{frame}
 
-\subsection{Variance Estimation}
+\subsection{Variance estimation}
 
 % -----------------------------------------------------------------------------
 \begin{frame}
@@ -286,11 +290,14 @@
     \end{Def}
     \vspace{0.25em}
     \begin{itemize}
-    \setlength{\itemsep}{8pt}
+    \setlength{\itemsep}{12pt}
         \item Depending on the design, the covariances may be \alert{zero},
             \alert{positive}, or \alert{negative}.
-        \item For the variance, $\var(\indicator_i)=\pi_i(1-\pi_i)$ for all
-            $i\in U$.
+        \item For the variance,
+            \begin{equation*}
+                \var(\indicator_i) = \pi_i(1-\pi_i) \qquad \text{for all}
+                \quad i\in U.
+            \end{equation*}
     \end{itemize}
 \end{frame}
 
@@ -326,7 +333,7 @@
 % -----------------------------------------------------------------------------
 \begin{frame}
     \begin{itemize}
-    \setlength{\itemsep}{15pt}
+    \setlength{\itemsep}{2pt}
         \item Let $p$ be a sampling design without replacement with $\pi_i>0$
             for all $i\in U$. The theoretical \alert{variance of the HT
             estimator} is
@@ -338,152 +345,21 @@
             can be estimated by the unbiased \alert{Horvitz--Thompson variance
             estimator} \citep{horvitz_thompson_1952}:
             \begin{equation*}
-                \widehat{\var}_{HT}\big(\,\tysht\big) = \sum_{i \in s}
+                \varest^{HT}\big(\,\tysht\big) = \sum_{i \in s}
                     \sum_{j \in s} \frac{\Delta_{ij}}{\pi_{ij}}
                     \frac{y_iy_j}{\pi_i\pi_j}.
             \end{equation*}
+        \item For \alert{fixed-size sampling designs}, alternative unbiased
+            variance estimators are available; see Supplements (Sect.
+            \NR.\ref{sec:supplements}B).
+        \item \alert{Approximations} to second-order inclusion probabilities
+            can be useful when the exact $\pi_{ij}$ are unavailable or
+            difficult to compute; see Supplements  (Sect.
+            \NR.\ref{sec:supplements}C).
     \end{itemize}
 \end{frame}
 
-% -----------------------------------------------------------------------------
-\begin{frame}
-    \frametitle{\normalsize Special Case: Fixed Sample Size}
-    \begin{itemize}
-    \setlength{\itemsep}{12pt}
-        \item For a sampling design with \alert{fixed sample size} $n$,
-            $\sum_{j\in U}\Delta_{ij}=0$ for all $i\in U$.
-        \item Hence, the variance of the HT estimator can also be written as
-            \begin{equation*}
-                \var\big(\tysht\big) = -\frac{1}{2}
-                \sum_{i\in U}\sum_{j\in U}
-                \Delta_{ij} \left(
-                    \frac{y_i}{\pi_i}-\frac{y_j}{\pi_j}
-                \right)^2.
-            \end{equation*}
-        \item If $\pi_{ij}>0$, this leads to the \alert{Sen--Yates--Grundy}
-            \citep[SYG;][]{sen_1953,yates_grundy_1953} variance estimator
-            \begin{equation*}
-                \widehat{\var}_{SYG}\big(\tysht\big)
-                = -\frac{1}{2} \sum_{i\in s}\sum_{j\in s}
-                \frac{\Delta_{ij}}{\pi_{ij}}
-                \left( \frac{y_i}{\pi_i}-\frac{y_j}{\pi_j}
-                \right)^2.
-            \end{equation*}
-    \end{itemize}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}
-    \begin{itemize}
-    \setlength{\itemsep}{6pt}
-        \item If $\Delta_{ij}\leq0$ for all $i\neq j$, $i,j\in U$, the SYG
-            estimator is \alert{nonnegative}.
-        \item The SYG estimator is \alert{numerically more stable} than
-            $\widehat{\var}_{HT}$, particularly when the coefficient of
-            variation of the $y_i/\pi_i$ is small.
-        % \item If $\pi_{ij}=0$ for some $i\neq j$, the SYG estimator cannot be
-        %     computed as stated. Omitting such pairs generally leads to
-        %     \alert{downward bias}.
-    \end{itemize}
-    \vspace{1em}
-    \begin{Exkurs}[Important identities]
-        \vspace{0.25em}
-        For sampling designs $p$ with \alert{fixed sample size} $n$,
-        \begin{equation*}
-        \sum_{i\in U}\pi_i=n
-        \qquad\text{and}\qquad
-        \sum_{j\in U}\pi_{ij}=n\pi_i
-        \quad (i\in U).
-        \end{equation*}
-        Hence,
-        \begin{equation*}
-        \sum_{j\in U}\Delta_{ij}
-        =
-        \sum_{j\in U}(\pi_{ij}-\pi_i\pi_j)
-        =0
-        \qquad (i\in U).
-        \end{equation*}
-        \vspace{0.25em}
-    \end{Exkurs}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}
-    \begin{Exkurs_forts}[cont.]
-        \vspace{0.25em}
-        \begin{itemize}
-        \setlength{\itemsep}{12pt}
-            \item In other words,
-                \begin{equation*}
-                    \text{fixed $n$} \quad \Longrightarrow \quad
-                    \sum_{j} \pi_{ij} = n \pi_i \quad \Longrightarrow \quad
-                    \sum_{j} \Delta_{ij} = 0 \quad \Longrightarrow \quad
-                    \text{SYG representation}
-                \end{equation*}
-            \item The above identities are useful for checking inclusion
-                probabilities and lead to the Sen--Yates--Grundy representation
-                of the HT variance.
-        \end{itemize}
-    \end{Exkurs_forts}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}
-    \frametitle{\normalsize Approximation of Second-Order Inclusion
-        Probabilities}
-    \begin{itemize}
-    \setlength{\itemsep}{8pt}
-        \item \citet{brewer_2000} proposed the following \alert{approximation}
-            of second-order inclusion probabilities for \emph{high-entropy}
-            designs:
-            \begin{equation}\label{eq:unequal_brewer_pij}
-                \pi_{ij} \approx \pi_i \, \pi_j \, \left(\frac{c_i +
-                    c_j}{2}\right) \qquad (i,j \in U, \; i \neq j),
-            \end{equation}
-            \noindent where the choice of the constants $c_i$, $i\in U$, is
-            discussed below.
-        \item Systematic sampling, for example, has low entropy.
-        \item Based on the approximation in
-            (\ref{eq:unequal_brewer_pij}), \citet{brewer_2000} gave the
-            following approximation to the theoretical \alert{variance of the
-            HT estimator}:
-
-            \vspace{-0.5em}
-
-            \begin{equation*}
-                \var_{\mathrm{A}}\big(\,\tysht\big) = \sum_{i \in U} \pi_i
-                    \big(1 - c_i \pi_i\big)
-                    \left(\frac{y_i}{\pi_i} - \frac{\ty}{n} \right)^2.
-            \end{equation*}
-    \end{itemize}
-\end{frame}
-
-% -----------------------------------------------------------------------------
-\begin{frame}
-    \begin{itemize}
-    \setlength{\itemsep}{12pt}
-        \item He also recommended the following \alert{variance estimator}:
-            \begin{equation*}
-                \widehat{\var}_{\mathrm{A}}\big(\,\tysht\big) = \sum_{i \in s}
-                    \left(\frac{1}{c_i} - \pi_i\right)
-                    \left(\frac{y_i}{\pi_i} - \frac{\tysht_y}{n} \right)^2.
-            \end{equation*}
-            \begin{itemize}
-            \setlength{\itemsep}{6pt}
-                \item The variance estimator is asymptotically unbiased for
-                    $\var_{\mathrm{A}}\big(\,\tysht\big)$.
-                \item $\widehat{\var}_{\mathrm{A}}\big(\,\tysht\big)$ is easy
-                    to compute.
-            \end{itemize}
-        \item \citet{brewer_2000} proposed \alert{three variants} for choosing
-            the \alert{constants} $c_i$. We use Variant 1:
-                \begin{equation*}
-                    c_i  = \frac{n - 1}{n - \pi_i} \qquad (i \in U).
-                \end{equation*}
-    \end{itemize}
-\end{frame}
-
-\subsection{Probability Proportional to Size (PPS)}
+\subsection{Probability proportional to size (PPS)}
 
 % -----------------------------------------------------------------------------
 \begin{frame}
@@ -615,11 +491,20 @@
     \end{center}
 \end{frame}
 
-\subsection{Selecting a PPS Sample}
+
+\subsection{Supplements}\label{sec:supplements}
 
 % -----------------------------------------------------------------------------
 \begin{frame}
-    \frametitle{\insertsectionnumber.\insertsubsectionnumber~\insertsubsection}
+    \begin{center}
+        \Huge{\textbf{\NR.\insertsubsectionnumber.~Supplements}}
+    \end{center}
+\end{frame}
+
+\subsubsection{Supplement: Selecting a PPS sample}
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\NR.\insertsubsectionnumber A~\insertsubsubsection}
     \begin{itemize}
     \setlength{\itemsep}{8pt}
     \item \citet{hanif_brewer_1980} classified \alert{47} PPS sampling
@@ -644,8 +529,8 @@
 
 % -----------------------------------------------------------------------------
 \begin{frame}
-    \frametitle{\normalsize{Sampling Procedure of \citet{brewer_1963}; Sample
-    Size $n=2$}}
+    \frametitle{\normalsize{Sampling procedure of \citet{brewer_1963}; sample
+    size $n=2$}}
 
     \alert{Assumption:} $x_i<\tx/2$ for all $i\in U$. Then
         \begin{equation*}
@@ -697,7 +582,142 @@
     \end{itemize}
 \end{frame}
 
+\subsubsection{Supplement: Fixed sample size}
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\NR.\insertsubsectionnumber B~\insertsubsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item For a sampling design with \alert{fixed sample size} $n$,
+            $\sum_{j\in U}\Delta_{ij}=0$ for all $i\in U$.
+        \item Hence, the variance of the HT estimator can also be written as
+            \begin{equation*}
+                \var\big(\tysht\big) = -\frac{1}{2}
+                \sum_{i\in U}\sum_{j\in U}
+                \Delta_{ij} \left(
+                    \frac{y_i}{\pi_i}-\frac{y_j}{\pi_j}
+                \right)^2.
+            \end{equation*}
+        \item If $\pi_{ij}>0$, this leads to the \alert{Sen--Yates--Grundy}
+            \citep[SYG;][]{sen_1953,yates_grundy_1953} variance estimator
+            \begin{equation*}
+                \varest^{SYG}\big(\tysht\big)
+                = -\frac{1}{2} \sum_{i\in s}\sum_{j\in s}
+                \frac{\Delta_{ij}}{\pi_{ij}}
+                \left( \frac{y_i}{\pi_i}-\frac{y_j}{\pi_j}
+                \right)^2.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
 
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{6pt}
+        \item If $\Delta_{ij}\leq0$ for all $i\neq j$, $i,j\in U$, the SYG
+            estimator is \alert{nonnegative}.
+        \item The SYG estimator is \alert{numerically more stable} than
+            $\varest^{HT}$, particularly when the coefficient of
+            variation of the $y_i/\pi_i$ is small.
+        % \item If $\pi_{ij}=0$ for some $i\neq j$, the SYG estimator cannot be
+        %     computed as stated. Omitting such pairs generally leads to
+        %     \alert{downward bias}.
+    \end{itemize}
+    \vspace{1em}
+    \begin{Exkurs}[Important identities]
+        \vspace{0.25em}
+        For sampling designs $p$ with \alert{fixed sample size} $n$,
+        \begin{equation*}
+        \sum_{i\in U}\pi_i=n
+        \qquad\text{and}\qquad
+        \sum_{j\in U}\pi_{ij}=n\pi_i
+        \quad (i\in U).
+        \end{equation*}
+        Hence,
+        \begin{equation*}
+        \sum_{j\in U}\Delta_{ij}
+        =
+        \sum_{j\in U}(\pi_{ij}-\pi_i\pi_j)
+        =0
+        \qquad (i\in U).
+        \end{equation*}
+        \vspace{0.25em}
+    \end{Exkurs}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{Exkurs_forts}[cont.]
+        \vspace{0.25em}
+        \begin{itemize}
+        \setlength{\itemsep}{12pt}
+            \item In other words,
+                \begin{equation*}
+                    \text{fixed $n$} \quad \Longrightarrow \quad
+                    \sum_{j} \pi_{ij} = n \pi_i \quad \Longrightarrow \quad
+                    \sum_{j} \Delta_{ij} = 0 \quad \Longrightarrow \quad
+                    \text{SYG representation}
+                \end{equation*}
+            \item The above identities are useful for checking inclusion
+                probabilities and lead to the Sen--Yates--Grundy representation
+                of the HT variance.
+        \end{itemize}
+    \end{Exkurs_forts}
+\end{frame}
+
+\subsubsection{Supplement: Approximation of second-order inclusion probabilities}
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \frametitle{\NR.\insertsubsectionnumber C~\insertsubsubsection}
+    \begin{itemize}
+    \setlength{\itemsep}{8pt}
+        \item \citet{brewer_2000} proposed the following \alert{approximation}
+            of second-order inclusion probabilities (for high-entropy)
+            designs:
+            \begin{equation*}
+                \pi_{ij} \approx \pi_i \, \pi_j \, \left(\frac{c_i +
+                    c_j}{2}\right) \qquad (i,j \in U, \; i \neq j),
+            \end{equation*}
+            \noindent where the choice of the constants $c_i$, $i\in U$, is
+            discussed below.
+        \item Based on the above approximation, \citet{brewer_2000} gave the
+            following approximation to the theoretical \alert{variance of the
+            HT estimator}:
+
+            \vspace{-0.5em}
+
+            \begin{equation*}
+                \var^{\mathrm{A}}\big(\,\tysht\big) = \sum_{i \in U} \pi_i
+                    \big(1 - c_i \pi_i\big)
+                    \left(\frac{y_i}{\pi_i} - \frac{\ty}{n} \right)^2.
+            \end{equation*}
+    \end{itemize}
+\end{frame}
+
+% -----------------------------------------------------------------------------
+\begin{frame}
+    \begin{itemize}
+    \setlength{\itemsep}{12pt}
+        \item He also recommended the following \alert{variance estimator}:
+            \begin{equation*}
+                \varest^{\mathrm{A}}\big(\,\tysht\big) = \sum_{i \in s}
+                    \left(\frac{1}{c_i} - \pi_i\right)
+                    \left(\frac{y_i}{\pi_i} - \frac{\tysht_y}{n} \right)^2.
+            \end{equation*}
+            \begin{itemize}
+            \setlength{\itemsep}{6pt}
+                \item The variance estimator is asymptotically unbiased for
+                    $\var^{\mathrm{A}}\big(\,\tysht\big)$.
+                \item $\varest^{\mathrm{A}}\big(\,\tysht\big)$ is easy
+                    to compute.
+            \end{itemize}
+        \item \citet{brewer_2000} proposed \alert{three variants} for choosing
+            the \alert{constants} $c_i$. Variant 1 uses:
+                \begin{equation*}
+                    c_i  = \frac{n - 1}{n - \pi_i} \qquad (i \in U).
+                \end{equation*}
+    \end{itemize}
+\end{frame}
 
 % -----------------------------------------------------------------------------
 \setcounter{section}{\the\numexpr\value{section}-1\relax}
